@@ -17,17 +17,7 @@ export default function Doctrine({ essays }: { essays: EssayDoc[] }) {
       id="r03"
       num="03"
       name="Doctrine"
-      heading={
-        <>
-          Dated. Graded. <em>Eventually scored.</em>
-        </>
-      }
-      intro={
-        <>
-          Numbered papers, not posts. Every one carries a conviction grade —
-          and the ones that are bets get <strong>settled in public.</strong>
-        </>
-      }
+      heading={<>The record of what I&rsquo;ve said.</>}
     >
       <div className="filters" role="group" aria-label="Filter essays">
         {CHIPS.map(([value, label]) => (

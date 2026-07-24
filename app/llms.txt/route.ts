@@ -30,14 +30,16 @@ Built commit: ${all.commit}
 
 ## The eight records
 
-- R-01 Attestation — who this is, in mono rows: ${site.url}/#r01
-- R-02 The Record — builds and service, dated, status-tagged: ${site.url}/#r02
-- R-03 Doctrine — numbered essays, graded, eventually scored: ${site.url}/#r03
-- R-04 Now — the current season, present tense: ${site.url}/#r04
-- R-05 Credentials — an individual CSA license, exact wording: ${site.url}/#r05
-- R-06 Signal — one inbox, on the record: ${site.url}/#r06
-- R-07 The System — the operating architecture, versioned: ${site.url}/#r07
-- R-08 The Archive — exhibits, not a gallery: ${site.url}/#r08
+The dossier is filed as numbered sections, read in order:
+
+- R-01 Attestation — the cover sheet: ${site.url}/
+- R-02 The Record — builds and service, dated, status-tagged: ${site.url}/record/
+- R-03 Doctrine — numbered essays, graded: ${site.url}/doctrine/
+- R-04 Now — the current season, present tense: ${site.url}/now/
+- R-05 Credentials — an individual CSA license, exact wording: ${site.url}/credentials/
+- R-06 Signal — contact, on the record: ${site.url}/signal/
+- R-07 The System — the operating architecture, versioned: ${site.url}/system/
+- R-08 The Archive — numbered, dated plates: ${site.url}/archive/
 
 ## Doctrine index
 

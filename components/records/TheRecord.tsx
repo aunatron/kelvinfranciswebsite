@@ -44,24 +44,7 @@ export default function TheRecord({
   service: Sourced<RecordEntry>[];
 }) {
   return (
-    <Section
-      id="r02"
-      num="02"
-      name="The Record"
-      heading={
-        <>
-          Eight years, <em>owned.</em>
-        </>
-      }
-      intro={
-        <>
-          Every build, dated and status-tagged.{" "}
-          <strong>The graveyard is here too</strong>
-          {" — "}parked work isn&rsquo;t hidden, it&rsquo;s the tuition
-          receipt.
-        </>
-      }
-    >
+    <Section id="r02" num="02" name="The Record" heading={<>What I&rsquo;ve built.</>}>
       <Ledger entries={builds} />
       <div className="fine">
         Parked is not failed. Every line above is a capability

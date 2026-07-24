@@ -25,6 +25,7 @@ export function GET() {
     records: {
       "R-01": {
         name: "Attestation",
+        url: `${site.url}/`,
         attestation: {
           id: "KF·2026·001",
           name: "KELVIN-FRANCIS PEPRAH",
@@ -38,12 +39,14 @@ export function GET() {
       },
       "R-02": {
         name: "The Record",
+        url: `${site.url}/record/`,
         builds: all.record.map(({ source, ...e }) => ({ ...e, source })),
         service: all.service.map(({ source, ...e }) => ({ ...e, source })),
         collaborations: "dormant — named only with written permission",
       },
       "R-03": {
         name: "Doctrine",
+        url: `${site.url}/doctrine/`,
         essays: all.essays.map((e) => ({
           record: e.record,
           title: e.title,
@@ -62,10 +65,12 @@ export function GET() {
       },
       "R-04": {
         name: "Now",
+        url: `${site.url}/now/`,
         entries: all.now.map((n) => ({ date: n.date, source: n.source })),
       },
       "R-05": {
         name: "Credentials",
+        url: `${site.url}/credentials/`,
         license: {
           authority: "Ghana Cyber Security Authority",
           title: "CSA-licensed cybersecurity professional",
@@ -76,18 +81,21 @@ export function GET() {
       },
       "R-06": {
         name: "Signal",
+        url: `${site.url}/signal/`,
         email: site.email,
         linkedin: site.linkedin,
         press: "dormant — activates on the first real mention",
       },
       "R-07": {
         name: "The System",
+        url: `${site.url}/system/`,
         version: all.system.version,
         changelog: all.system.changelog,
         source: all.system.source,
       },
       "R-08": {
         name: "The Archive",
+        url: `${site.url}/archive/`,
         plates: all.archive.map(({ source, ...p }) => ({ ...p, source })),
       },
     },

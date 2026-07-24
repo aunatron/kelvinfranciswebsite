@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getEssays, getNowEntries } from "@/lib/content";
+import { RECORDS } from "@/lib/records";
 import { site } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -10,10 +11,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: e.date,
   }));
   const latestNow = getNowEntries()[0]?.date;
-  return [
-    { url: `${site.url}/`, lastModified: latestNow },
-    { url: `${site.url}/doctrine/`, lastModified: essays[0]?.lastModified },
-    { url: `${site.url}/now/`, lastModified: latestNow },
-    ...essays,
-  ];
+  const records = RECORDS.map((r) => ({
+    url: `${site.url}${r.href}`,
+    lastModified: latestNow,
+  }));
+  return [...records, ...essays];
 }

@@ -37,7 +37,16 @@ let strippedBytes = 0;
 for (const file of walk(OUT)) {
   if (!file.endsWith(".html")) continue;
   const before = readFileSync(file, "utf8");
-  const after = before.replace(scriptRe, "").replace(preloadRe, "");
+  let after = before.replace(scriptRe, "").replace(preloadRe, "");
+  // React float hoists font preloads into <head> but can leave the body
+  // originals — keep only the first tag per href.
+  const seenPreload = new Set();
+  after = after.replace(/<link[^>]*rel="preload"[^>]*>/g, (tag) => {
+    const href = tag.match(/href="([^"]*)"/)?.[1];
+    if (seenPreload.has(href)) return "";
+    seenPreload.add(href);
+    return tag;
+  });
   if (after !== before) {
     writeFileSync(file, after);
     strippedBytes += before.length - after.length;

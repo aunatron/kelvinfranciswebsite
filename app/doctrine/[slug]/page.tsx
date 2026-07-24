@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import Nav from "@/components/site/Nav";
-import Footer from "@/components/site/Footer";
+import Shell from "@/components/site/Shell";
 import Verify from "@/components/ui/Verify";
+import { VerifyScript } from "@/components/site/scripts";
 import { getEssays } from "@/lib/content";
 import { site } from "@/lib/site";
 
@@ -53,12 +53,8 @@ export default async function EssayPage({
 
   return (
     <>
-      <a className="skip" href="#main">
-        Skip to content
-      </a>
-      <Nav />
-      <main id="main" className="page" data-page-mode={essay.mode}>
-        <article className="wrap essay-page">
+      <Shell pageMode={essay.mode}>
+        <article className="wrap essay-page page">
           <div className="sec-label">
             {essay.record} · {essay.date}
           </div>
@@ -76,12 +72,12 @@ export default async function EssayPage({
           <Verify sources={[essay.source]} />
           <p className="split page-back">
             <a className="mono-link" href="/doctrine/">
-              ← All doctrine
+              ← § 03 — Doctrine
             </a>
           </p>
         </article>
-      </main>
-      <Footer />
+      </Shell>
+      <VerifyScript />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

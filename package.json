@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "validate": "tsx scripts/validate-content.ts",
-    "prebuild": "npm run validate && node scripts/strip-exif.mjs",
+    "prebuild": "npm run validate && node scripts/copy-fonts.mjs && node scripts/strip-exif.mjs",
     "build": "next build && node scripts/postbuild.mjs",
     "start": "next start",
     "lint": "next lint"
@@ -21,6 +21,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@capsizecss/metrics": "^4.2.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",

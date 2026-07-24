@@ -7,11 +7,7 @@ export default function Credentials() {
       id="r05"
       num="05"
       name="Credentials"
-      heading={
-        <>
-          Licensed. Lawful. <em>Defensive.</em>
-        </>
-      }
+      heading={<>The licence, stated exactly.</>}
     >
       <div className="cred-grid">
         <div className="cred-card">
@@ -32,11 +28,6 @@ export default function Credentials() {
             <br />
             Company accreditations are claimed only when they exist.
           </div>
-          <p className="cred-aside">
-            Security work runs on trust, and trust runs on verification. So
-            the wording here is exact —{" "}
-            <strong>and it stays exact even when a looser word would sell better.</strong>
-          </p>
         </div>
       </div>
     </Section>

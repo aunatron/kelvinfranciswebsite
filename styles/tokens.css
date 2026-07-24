@@ -56,9 +56,9 @@
   --tap: 44px;
   --ease: cubic-bezier(.2, .8, .3, 1);
 
-  /* FAMILIES — serif speaks, mono verifies (loaded via next/font in layout) */
-  --serif: var(--font-serif), Georgia, serif;
-  --mono: var(--font-mono), ui-monospace, monospace;
+  /* FAMILIES — serif speaks, mono verifies (see styles/fonts.css) */
+  --serif: "Spectral", "Spectral-fallback", Georgia, serif;
+  --mono: "IBM Plex Mono", "PlexMono-fallback", "Courier New", ui-monospace, monospace;
 }
 
 /* MODE ENGINE — one attribute, whole page shifts */

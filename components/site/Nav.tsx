@@ -1,28 +1,23 @@
 import Sigil from "@/components/ui/Sigil";
 import ModeToggle from "@/components/ui/ModeToggle";
+import { RECORDS } from "@/lib/records";
 
-const LINKS = [
-  ["/#r01", "Attestation"],
-  ["/#r02", "Record"],
-  ["/#r03", "Doctrine"],
-  ["/#r04", "Now"],
-  ["/#r05", "Credentials"],
-  ["/#r06", "Signal"],
-  ["/#r07", "System"],
-  ["/#r08", "Archive"],
-] as const;
-
-export default function Nav() {
+export default function Nav({ current }: { current?: string }) {
   return (
-    <nav className="nav" aria-label="Primary">
+    <nav className="nav" aria-label="Records">
       <div className="nav-in">
-        <a href="/" aria-label="Home">
+        <a href="/" aria-label="R-01 — Attestation">
           <Sigil cut="small" className="nav-sigil" label="KF" />
         </a>
         <div className="nav-links">
-          {LINKS.map(([href, label]) => (
-            <a key={href} href={href}>
-              {label}
+          {RECORDS.slice(1).map((r) => (
+            <a
+              key={r.href}
+              href={r.href}
+              className={current === r.href ? "on" : undefined}
+              aria-current={current === r.href ? "page" : undefined}
+            >
+              {r.name}
             </a>
           ))}
         </div>

@@ -12,22 +12,7 @@ function pad(n: number) {
  */
 export default function Archive({ plates }: { plates: Sourced<ArchivePlate>[] }) {
   return (
-    <Section
-      id="r08"
-      num="08"
-      name="The Archive"
-      heading={
-        <>
-          Exhibits, <em>not a gallery.</em>
-        </>
-      }
-      intro={
-        <>
-          Work documented as numbered, dated plates — each tied to the record
-          it evidences. <strong>Captions state what and when, nothing more.</strong>
-        </>
-      }
-    >
+    <Section id="r08" num="08" name="The Archive" heading={<>The visual record.</>}>
       {plates.length === 0 ? (
         <div className="dormant">
           <div className="dormant-h">Plates — none yet</div>

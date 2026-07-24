@@ -1,0 +1,66 @@
+/* ══════════════════════════════════════════════════════════════
+   FONTS — self-hosted latin subsets from @fontsource (OFL),
+   copied to /fonts at build by scripts/copy-fonts.mjs.
+
+   font-display: optional — one paint, never a visible swap.
+   The fallbacks below are metric-matched so that when a cold
+   load does paint with them, the geometry is the same.
+
+   Override values are COMPUTED, not guessed — from the real font
+   metrics via scripts/compute-font-fallback.mjs (@capsizecss/metrics).
+   Re-run that script if a face ever changes.
+   ══════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Spectral";
+  font-style: normal;
+  font-weight: 300;
+  font-display: optional;
+  src: url("/fonts/spectral-latin-300-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Spectral";
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url("/fonts/spectral-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Spectral";
+  font-style: italic;
+  font-weight: 400;
+  font-display: optional;
+  src: url("/fonts/spectral-latin-400-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Spectral";
+  font-style: normal;
+  font-weight: 500;
+  font-display: optional;
+  src: url("/fonts/spectral-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url("/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+}
+
+/* Metric-matched fallbacks — computed, see header. */
+@font-face {
+  font-family: "Spectral-fallback";
+  src: local("Georgia");
+  size-adjust: 100.0447%;
+  ascent-override: 105.8527%;
+  descent-override: 46.2793%;
+  line-gap-override: 0.0000%;
+}
+@font-face {
+  font-family: "PlexMono-fallback";
+  src: local("Courier New");
+  size-adjust: 99.9837%;
+  ascent-override: 102.5167%;
+  descent-override: 27.5045%;
+  line-gap-override: 0.0000%;
+}

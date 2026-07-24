@@ -4,6 +4,9 @@ _local/
 # Local tooling
 .claude/
 
+# Generated at prebuild from @fontsource packages
+public/fonts/
+
 # Node
 node_modules/
 .next/

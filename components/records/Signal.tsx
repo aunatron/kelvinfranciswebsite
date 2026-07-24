@@ -3,23 +3,7 @@ import { site } from "@/lib/site";
 
 export default function Signal() {
   return (
-    <Section
-      id="r06"
-      num="06"
-      name="Signal"
-      heading={
-        <>
-          One inbox. <em>On the record.</em>
-        </>
-      }
-      intro={
-        <>
-          Engagements and serious inquiries go through email. No comment
-          sections, no like counts —{" "}
-          <strong>the only score on this site is the track record.</strong>
-        </>
-      }
-    >
+    <Section id="r06" num="06" name="Signal" heading={<>Contact.</>}>
       <div className="sig-links">
         <a className="sig-link" href={`mailto:${site.email}`}>
           <span aria-hidden="true">↗</span> Email

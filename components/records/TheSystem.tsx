@@ -11,16 +11,7 @@ export default function TheSystem({ doc }: { doc: SystemDocFull }) {
       name="The System"
       heading={
         <>
-          Human judgment. <em>Machine memory.</em>{" "}
-          <span className="sys-v">The System — v{doc.version}</span>
-        </>
-      }
-      intro={
-        <>
-          Nobody publishes their operating architecture.{" "}
-          <strong>That&rsquo;s exactly why this is here.</strong> It ships
-          versioned, like software — because it changes, and the changes
-          should be on the record too.
+          How I work. <span className="sys-v">The System — v{doc.version}</span>
         </>
       }
     >
