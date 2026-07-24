@@ -39,6 +39,17 @@ export const SystemDocSchema = z.object({
   changelog: z.array(z.string()),
 });
 
+export const ArchivePlateSchema = z.object({
+  plate: z.number().int().positive(),
+  date: z.string(),
+  caption: z.string(),
+  media: z.enum(["image", "clip"]),
+  src: z.string(),
+  poster: z.string().optional(),
+  record: z.string().optional(),
+});
+
+export type ArchivePlate = z.infer<typeof ArchivePlateSchema>;
 export type Essay = z.infer<typeof EssaySchema>;
 export type RecordEntry = z.infer<typeof RecordEntrySchema>;
 export type NowEntry = z.infer<typeof NowEntrySchema>;

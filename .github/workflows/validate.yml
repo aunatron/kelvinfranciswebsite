@@ -1,0 +1,28 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # A malformed record must fail the build — this is the enforcement,
+      # not a convention.
+      - name: Validate content (zod)
+        run: npm run validate
+
+      - name: Build (includes EXIF strip, runtime strip, 30KB JS budget)
+        run: npm run build

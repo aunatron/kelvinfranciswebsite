@@ -12,7 +12,7 @@ import { join } from "node:path";
 
 const OUT = "out";
 const JS_BUDGET_BYTES = 30 * 1024;
-const KEEP_SCRIPT_IDS = ["kf-mode"];
+const KEEP_SCRIPT_IDS = ["kf-mode", "kf-filter", "kf-verify"];
 
 function* walk(dir) {
   for (const entry of readdirSync(dir)) {
@@ -22,7 +22,10 @@ function* walk(dir) {
   }
 }
 
-const keepPattern = KEEP_SCRIPT_IDS.map((id) => `id="${id}"`).join("|");
+// Keep allowlisted inline scripts and JSON-LD data blocks; strip the rest.
+const keepPattern = KEEP_SCRIPT_IDS.map((id) => `id="${id}"`)
+  .concat(['type="application/ld\\+json"'])
+  .join("|");
 const scriptRe = new RegExp(
   `<script(?![^>]*(?:${keepPattern}))[^>]*>[\\s\\S]*?<\\/script>`,
   "g"
@@ -44,6 +47,20 @@ for (const file of walk(OUT)) {
 
 // The runtime chunks are no longer referenced — do not ship them.
 rmSync(join(OUT, "_next", "static", "chunks"), { recursive: true, force: true });
+
+// RSC flight payloads (client-navigation data) are dead without a runtime.
+function cleanFlight(dir) {
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry);
+    if (entry.startsWith("__next.")) {
+      rmSync(p, { recursive: true, force: true });
+      continue;
+    }
+    if (statSync(p).isDirectory()) cleanFlight(p);
+    else if (entry === "index.txt") rmSync(p);
+  }
+}
+cleanFlight(OUT);
 
 // Budget: every remaining .js file plus every inline <script> that survived.
 let shippedJs = 0;

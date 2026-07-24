@@ -1,0 +1,7 @@
+# LF everywhere. The VERIFY mechanism hashes raw source bytes, so the
+# working tree and the committed blob must be byte-identical on every OS.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.woff2 binary
