@@ -69,6 +69,29 @@
   --leading-essay: 1.55;
 }
 
+/* The Rupture animates paint only. Leading tightens BEFORE first paint via
+   this attribute, so the layout never shifts mid-read (CLS stays 0). */
+html[data-leading="hunter"] {
+  --leading-essay: 1.55;
+}
+
+/* No-JS arm of the mode engine: a Hunter essay still reads cold, scoped to
+   its content. With scripting, the Rupture handles the whole page instead. */
+@media (scripting: none) {
+  main[data-page-mode="hunter"] {
+    --gold: #917b39;
+    --gold-bright: #b0902e;
+    --bone: #e2dccb;
+    --leading-essay: 1.55;
+  }
+}
+
+/* HOLOGRAPHIC LAYER — spec-locked chromatic pair */
+:root {
+  --holo-cyan: #4fd4c4;
+  --holo-magenta: #d4739b;
+}
+
 /* PAPER GRAIN — felt, not seen */
 body::before {
   content: "";

@@ -29,6 +29,17 @@ a {
 .mono {
   font-family: var(--mono);
 }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .wrap {
   max-width: 65rem;
   margin: 0 auto;
@@ -1126,6 +1137,227 @@ h2 em {
   color: var(--bone-dim);
 }
 
+/* ─── MOMENT A · THE LIVE ATTESTATION ─── */
+.a-digest-row {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--ink-line);
+}
+.digest {
+  word-break: break-all;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.7;
+}
+.digest .d {
+  display: inline-block;
+}
+.attest-live .digest .d {
+  opacity: 0;
+  transform: translateY(.25em);
+  animation: digit-settle .32s var(--ease) forwards;
+  animation-delay: calc(1.2s + var(--i) * .014s);
+}
+@keyframes digit-settle {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.attest-foot {
+  margin-top: var(--space-4);
+}
+.attest-seal {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  border: 1px solid var(--gold-rule);
+  color: var(--gold);
+  padding: 0 var(--space-3);
+  letter-spacing: .16em;
+  font-size: var(--text-2xs);
+}
+.attest-live .attest-seal {
+  opacity: 0;
+}
+.attest-live.sealed .attest-seal {
+  animation: seal-stamp .3s var(--ease) forwards;
+}
+@keyframes seal-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.attest-seal.ok {
+  border-color: var(--grade-fact);
+  color: var(--grade-fact);
+}
+.attest-seal.fail {
+  border-color: var(--gold-rule);
+  color: var(--bone-dim);
+}
+
+/* ─── MOMENT C · THE RUPTURE — gold cools over 800ms, nothing tears ─── */
+html.rupture body,
+html.rupture *,
+html.rupture *::before,
+html.rupture *::after {
+  transition:
+    color .8s var(--ease),
+    background-color .8s var(--ease),
+    border-color .8s var(--ease),
+    fill .8s var(--ease),
+    stroke .8s var(--ease) !important;
+}
+
+/* ─── HOLOGRAPHIC LAYER (R-01, mounted after first paint) ─── */
+.holo-wrap {
+  position: relative;
+  perspective: 700px;
+  perspective-origin: 50% 40%;
+}
+.holo-rig {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform .18s var(--ease);
+}
+.holo-layer {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.holo-layer svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  display: block;
+}
+.hl-back {
+  transform: translateZ(-22px);
+  opacity: .3;
+  filter: blur(1.4px);
+}
+.hl-cyan {
+  transform: translateZ(-7px);
+  opacity: .42;
+}
+.hl-mag {
+  transform: translateZ(7px);
+  opacity: .42;
+}
+.hl-core {
+  transform: translateZ(0);
+}
+.hl-front {
+  transform: translateZ(22px);
+  opacity: .22;
+  filter: blur(.8px);
+}
+.hl-cyan svg {
+  color: var(--holo-cyan);
+  mix-blend-mode: screen;
+}
+.hl-mag svg {
+  color: var(--holo-magenta);
+  mix-blend-mode: screen;
+}
+.hl-back svg,
+.hl-front svg {
+  color: var(--gold);
+}
+.hl-core svg {
+  color: var(--gold-bright);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--gold-bright) 55%, transparent))
+    drop-shadow(0 0 22px color-mix(in srgb, var(--gold) 30%, transparent));
+}
+.holo-floor {
+  position: absolute;
+  left: 50%;
+  bottom: -55%;
+  width: 300%;
+  height: 60%;
+  transform: translateX(-50%) rotateX(74deg);
+  transform-origin: 50% 100%;
+  background-image:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--gold) 16%, transparent) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--gold) 16%, transparent) 0 1px, transparent 1px 22px);
+  -webkit-mask-image: radial-gradient(ellipse 45% 100% at 50% 100%, #000 20%, transparent 72%);
+  mask-image: radial-gradient(ellipse 45% 100% at 50% 100%, #000 20%, transparent 72%);
+  animation: floor-drift 14s linear infinite;
+  opacity: .6;
+  pointer-events: none;
+}
+@keyframes floor-drift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 22px, 0 22px;
+  }
+}
+.holo-scan {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--ink) 30%, transparent) 0 1px, transparent 1px 3px);
+  mix-blend-mode: multiply;
+  opacity: .55;
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 45%, #000 40%, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 60% at 50% 45%, #000 40%, transparent 75%);
+}
+.holo-sweep {
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  top: 0;
+  height: 30%;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--gold-bright) 12%, transparent), transparent);
+  /* transform-only — the sweep must never touch layout (CLS stays 0) */
+  animation: holo-sweep 5.5s ease-in-out infinite;
+  will-change: transform;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
+}
+@keyframes holo-sweep {
+  0% {
+    transform: translateY(-110%);
+  }
+  100% {
+    transform: translateY(400%);
+  }
+}
+.holo-audio {
+  position: absolute;
+  left: calc(100% + var(--space-5));
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: .14em;
+  background: none;
+  border: 1px solid var(--ink-line);
+  color: var(--bone-faint);
+  padding: 0 var(--space-3);
+  min-height: var(--tap);
+  cursor: pointer;
+  transition: border-color .2s var(--ease), color .2s var(--ease);
+}
+.holo-audio:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+.holo-audio.on {
+  border-color: var(--gold-rule);
+  color: var(--gold);
+}
+
 /* ─── SIGIL INSCRIPTION ─── */
 .sigil-draw .s-stroke {
   stroke-dasharray: 120;
@@ -1283,6 +1515,24 @@ h2 em {
   .sigil-draw .s-fill {
     opacity: 1;
     animation: none;
+  }
+  .attest-live .digest .d {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .attest-live .attest-seal {
+    opacity: 1;
+    animation: none;
+  }
+  .holo-floor,
+  .holo-sweep {
+    animation: none;
+  }
+  html.rupture *,
+  html.rupture *::before,
+  html.rupture *::after {
+    transition: none !important;
   }
   html {
     scroll-behavior: auto;

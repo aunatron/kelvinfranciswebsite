@@ -1,4 +1,4 @@
-import { getAllContent } from "@/lib/content";
+import { getAllContent, getDossierAttestation } from "@/lib/content";
 import { site, repoUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -16,6 +16,7 @@ export function GET() {
     url: site.url,
     repository: repoUrl,
     commit: all.commit,
+    dossierDigest: getDossierAttestation().digest,
     verification: {
       method:
         "sha256(raw source bytes) — re-fetch each path from raw.githubusercontent.com pinned to the commit and compare",
@@ -61,7 +62,12 @@ export function GET() {
           url: `${site.url}/doctrine/${e.slug}/`,
           source: e.source,
         })),
-        trackRecord: "No resolved calls yet. First Reckoning: Q4 2026.",
+        trackRecord: {
+          url: `${site.url}/track-record/`,
+          note: "No resolved calls yet. First Reckoning: Q4 2026.",
+          formula:
+            "hitRate = (correct + 0.5·partial) / (correct + partial + wrong); withdrawn excluded from the math, displayed all the same",
+        },
       },
       "R-04": {
         name: "Now",

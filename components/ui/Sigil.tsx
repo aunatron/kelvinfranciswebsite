@@ -19,8 +19,10 @@ export default function Sigil({
 }: SigilProps) {
   const strokeWidth = cut === "small" ? 3.5 : 2;
   const junctionR = cut === "small" ? 2.6 : 1.8;
-  const s = inscribe ? "s-stroke" : undefined;
-  const f = inscribe ? "s-fill" : undefined;
+  // Classes are always present; the `sigil-draw` container class starts the
+  // inscription — statically via `inscribe`, or added later (the Rupture).
+  const s = "s-stroke";
+  const f = "s-fill";
 
   return (
     <svg

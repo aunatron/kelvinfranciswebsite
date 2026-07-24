@@ -1,9 +1,12 @@
 import Shell from "@/components/site/Shell";
 import Attestation from "@/components/records/Attestation";
 import RecordIndex from "@/components/site/RecordIndex";
+import { AttestScript, HoloScript } from "@/components/site/scripts";
+import { getDossierAttestation } from "@/lib/content";
 import { site, repoUrl } from "@/lib/site";
 
 export default function Home() {
+  const attest = getDossierAttestation();
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -27,9 +30,11 @@ export default function Home() {
   return (
     <>
       <Shell current="/">
-        <Attestation />
+        <Attestation attest={attest} />
         <RecordIndex />
       </Shell>
+      <AttestScript />
+      <HoloScript />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

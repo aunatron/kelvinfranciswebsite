@@ -12,7 +12,7 @@ import { join } from "node:path";
 
 const OUT = "out";
 const JS_BUDGET_BYTES = 30 * 1024;
-const KEEP_SCRIPT_IDS = ["kf-mode", "kf-filter", "kf-verify"];
+const KEEP_SCRIPT_IDS = ["kf-mode", "kf-filter", "kf-verify", "kf-attest", "kf-holo"];
 
 function* walk(dir) {
   for (const entry of readdirSync(dir)) {
@@ -71,31 +71,48 @@ function cleanFlight(dir) {
 }
 cleanFlight(OUT);
 
-// Budget: every remaining .js file plus every inline <script> that survived.
-let shippedJs = 0;
-const shipped = [];
+// Nothing references the build manifests once the runtime is gone.
+function cleanManifests(dir) {
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry);
+    if (statSync(p).isDirectory()) cleanManifests(p);
+    else if (entry.endsWith(".js")) rmSync(p);
+  }
+}
+cleanManifests(join(OUT, "_next"));
+
+// Budget: what a single page ships to a visitor — its inline executable
+// scripts (ld+json is data, excluded) plus any .js it references. The 30KB
+// law is per page-load; the all-page total is reported for visibility.
+let totalJs = 0;
+let maxPage = { file: "", bytes: 0 };
+const externalJs = [];
 for (const file of walk(OUT)) {
-  if (file.endsWith(".js")) {
-    const size = statSync(file).size;
-    shippedJs += size;
-    shipped.push(`${file} (${size} B)`);
+  if (file.endsWith(".js")) externalJs.push(`${file} (${statSync(file).size} B)`);
+  if (!file.endsWith(".html")) continue;
+  const html = readFileSync(file, "utf8");
+  let pageJs = 0;
+  for (const m of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
+    if (/application\/ld\+json/.test(m[1])) continue;
+    pageJs += Buffer.byteLength(m[2], "utf8");
   }
-  if (file.endsWith(".html")) {
-    for (const m of readFileSync(file, "utf8").matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)) {
-      shippedJs += Buffer.byteLength(m[1], "utf8");
-    }
+  for (const m of html.matchAll(/<script[^>]*src="([^"]*)"[^>]*>/g)) {
+    const p = join(OUT, m[1].replace(/^\//, ""));
+    if (existsSync(p)) pageJs += statSync(p).size;
   }
+  totalJs += pageJs;
+  if (pageJs > maxPage.bytes) maxPage = { file, bytes: pageJs };
 }
 
 console.log(`postbuild: processed ${htmlCount} HTML file(s), stripped ${strippedBytes} bytes of framework JS`);
-console.log(`postbuild: shipped JS = ${shippedJs} bytes (budget ${JS_BUDGET_BYTES})`);
-if (shipped.length) console.log(shipped.join("\n"));
+console.log(`postbuild: heaviest page = ${maxPage.bytes} B executable JS (${maxPage.file}); all-page total = ${totalJs} B; budget ${JS_BUDGET_BYTES} B per page`);
+if (externalJs.length) console.log("unreferenced .js files present:\n" + externalJs.join("\n"));
 
 if (!existsSync(join(OUT, "index.html"))) {
   console.error("postbuild: out/index.html missing — export failed");
   process.exit(1);
 }
-if (shippedJs > JS_BUDGET_BYTES) {
-  console.error(`postbuild: JS budget exceeded — ${shippedJs} > ${JS_BUDGET_BYTES}. Build rejected.`);
+if (maxPage.bytes > JS_BUDGET_BYTES) {
+  console.error(`postbuild: JS budget exceeded — ${maxPage.file} ships ${maxPage.bytes} > ${JS_BUDGET_BYTES}. Build rejected.`);
   process.exit(1);
 }

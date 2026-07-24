@@ -142,6 +142,27 @@ export function getArchivePlates(): Sourced<ArchivePlate>[] {
     .sort((a, b) => a.plate - b.plate);
 }
 
+/**
+ * The dossier digest — one hash over every content file's hash, in sorted
+ * path order. The Live Attestation recomputes this in the visitor's browser
+ * from the sources on GitHub; a match seals the whole dossier at once.
+ */
+export function getDossierAttestation() {
+  const all = [
+    ...getRecordEntries(),
+    ...getServiceEntries(),
+    ...getEssays(),
+    ...getNowEntries(),
+    getSystemDoc(),
+    ...getArchivePlates(),
+  ].map((x) => x.source);
+  const sorted = [...all].sort((a, b) => (a.path < b.path ? -1 : 1));
+  const digest = sha256(
+    Buffer.from(sorted.map((s) => `${s.path}:${s.hash}`).join("\n"), "utf8")
+  );
+  return { digest, commit: getCommit(), files: sorted };
+}
+
 /** Load everything once — used by the validate script and records.json. */
 export function getAllContent() {
   return {

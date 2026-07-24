@@ -41,6 +41,9 @@ export default function Doctrine({ essays }: { essays: EssayDoc[] }) {
             No resolved calls yet. First Reckoning:{" "}
             <span className="mono score-when">Q4 2026</span>.
           </p>
+          <a className="mono-link" href="/track-record/">
+            → The Reckoning
+          </a>
         </div>
         <span className="phase">misses listed first</span>
       </div>

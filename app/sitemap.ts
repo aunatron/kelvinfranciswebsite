@@ -15,5 +15,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${site.url}${r.href}`,
     lastModified: latestNow,
   }));
-  return [...records, ...essays];
+  return [
+    ...records,
+    { url: `${site.url}/track-record/`, lastModified: latestNow },
+    ...essays,
+  ];
 }
