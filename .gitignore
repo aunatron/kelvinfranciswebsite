@@ -1,0 +1,16 @@
+﻿# Local reference — never publish
+_local/
+
+# Local tooling
+.claude/
+
+# Node
+node_modules/
+.next/
+out/
+.DS_Store
+*.log
+
+# Env — there should never be any, but belt and braces
+.env
+.env.*

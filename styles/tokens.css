@@ -1,0 +1,82 @@
+/* ══════════════════════════════════════════════════════════════
+   DESIGN TOKENS — audit-verified against WCAG AA.
+   Do not substitute values. --gold-rule is borders-only.
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* GROUND */
+  --ink: #0e0c09;
+  --ink-raised: #17130d;
+  --ink-line: #241e15;
+
+  /* METAL — hue-locked 45.1° */
+  --gold: #b0902e;        /* 6.05 ✓ accent, links */
+  --gold-bright: #d0ab39; /* 8.43 ✓ hover, active */
+  --gold-dim: #947a2f;    /* 4.48 ✓ small label text */
+  --gold-rule: #6e5c23;   /* 2.83 — BORDERS ONLY, never text */
+
+  /* TEXT */
+  --bone: #ede6d6;        /* 14.88 ✓ body */
+  --bone-dim: #a79e8c;    /*  6.97 ✓ secondary */
+  --bone-faint: #867c6a;  /*  4.50 ✓ meta */
+
+  /* GRADES */
+  --grade-fact: #7da582;
+  --grade-conv: #b0902e;
+  --grade-scen: #c7a45c;
+
+  /* SPACING */
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* TYPE */
+  --text-2xs: .6875rem; /* 11px — mono floor, never smaller */
+  --text-xs: .75rem;
+  --text-sm: .85rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.3125rem;
+  --text-2xl: clamp(1.35rem, 2.4vw, 1.75rem);
+  --text-3xl: clamp(1.85rem, 4.2vw, 2.85rem);
+  --text-4xl: clamp(2.4rem, 6.4vw, 4.4rem);
+
+  /* RHYTHM */
+  --leading-tight: 1.1;
+  --leading-body: 1.6;
+  --leading-essay: 1.7;
+  --measure: 68ch;
+  --measure-tight: 46ch;
+  --tap: 44px;
+  --ease: cubic-bezier(.2, .8, .3, 1);
+
+  /* FAMILIES — serif speaks, mono verifies (loaded via next/font in layout) */
+  --serif: var(--font-serif), Georgia, serif;
+  --mono: var(--font-mono), ui-monospace, monospace;
+}
+
+/* MODE ENGINE — one attribute, whole page shifts */
+[data-mode="hunter"] {
+  --gold: #917b39;
+  --gold-bright: #b0902e;
+  --bone: #e2dccb;
+  --leading-essay: 1.55;
+}
+
+/* PAPER GRAIN — felt, not seen */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: .035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
