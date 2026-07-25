@@ -1,0 +1,38 @@
+name: quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Builds the artifact the audits run against. The build itself already
+      # enforces the 30KB per-page JS budget and strips EXIF.
+      - name: Build
+        run: npm run build
+
+      # Any text colour under 4.5:1 on the ground it renders on = rejected.
+      # Also fails if --gold-rule is ever used for text.
+      - name: Contrast audit
+        run: npm run audit:contrast
+
+      # axe, every route, both modes.
+      - name: Accessibility audit (axe)
+        run: npm run audit:a11y
+
+      # Performance >= 95, accessibility/best-practices/SEO 100, CLS 0.
+      - name: Lighthouse
+        run: npm run audit:lighthouse

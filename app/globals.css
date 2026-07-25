@@ -295,7 +295,8 @@ h1 em {
   }
 }
 .a-key {
-  color: var(--gold-dim);
+  /* --gold, not -dim: on the raised panel ground -dim is 4.48 (AA needs 4.5) */
+  color: var(--gold);
   letter-spacing: .08em;
 }
 .a-val {
@@ -960,7 +961,8 @@ h2 em {
   content: "·";
   position: absolute;
   left: 2px;
-  color: var(--gold-dim);
+  /* --gold, not -dim: on the raised panel ground -dim is 4.48 */
+  color: var(--gold);
 }
 
 /* ─── ARCHIVE (R-08) ─── */
@@ -1199,6 +1201,16 @@ h2 em {
 .attest-seal.fail {
   border-color: var(--gold-rule);
   color: var(--bone-dim);
+}
+
+/* Hunter's gold is cooler (4.49 on a raised panel — just under AA), so in
+   hunter mode the panels sit flat on the page ink, where it clears 4.74.
+   Congruent as well as compliant: hunter is the flatter register. */
+[data-mode="hunter"] .attest,
+[data-mode="hunter"] .score,
+[data-mode="hunter"] .cred-card,
+[data-mode="hunter"] .changelog {
+  background: var(--ink);
 }
 
 /* ─── MOMENT C · THE RUPTURE — gold cools over 800ms, nothing tears ─── */

@@ -31,9 +31,18 @@ to be believed.
   loudly (also enforced in CI by `validate.yml`);
 - an image with metadata — every JPEG/PNG under `public/` has Exif/GPS
   segments stripped by a build step (photos leak location);
-- more than 30KB of JavaScript — the Next.js client runtime is removed at
-  postbuild; the site ships server-rendered HTML plus a few small inline
-  native scripts, and the budget is a hard build failure.
+- more than 30KB of JavaScript on any single page — the Next.js client
+  runtime is removed at postbuild; the site ships server-rendered HTML plus
+  a few small inline native scripts, and the budget is a hard build failure.
+
+CI adds three more gates on every push (`quality.yml`):
+
+- **contrast** — every text colour is checked against the ground it actually
+  renders on, in both modes; under 4.5:1 fails, and `--gold-rule` may never
+  colour text;
+- **axe** — every route, both modes, zero violations;
+- **Lighthouse** — performance ≥ 95, accessibility / best-practices / SEO
+  100, and CLS exactly 0.
 
 ## Archive consent rule
 
