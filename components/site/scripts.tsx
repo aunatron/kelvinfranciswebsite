@@ -49,6 +49,18 @@ export function HoloScript() {
   );
 }
 
+/** Arrow keys walk the dossier in order, using the pager's own links. */
+export function PagerKeysScript() {
+  return (
+    <script
+      id="kf-keys"
+      dangerouslySetInnerHTML={{
+        __html: `(function(){document.addEventListener("keydown",function(e){if(e.metaKey||e.ctrlKey||e.altKey||e.shiftKey)return;var t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;var rel=e.key==="ArrowLeft"?"prev":e.key==="ArrowRight"?"next":null;if(!rel)return;var a=document.querySelector('.pager a[rel="'+rel+'"]');if(a){e.preventDefault();location.href=a.href;}});})();`,
+      }}
+    />
+  );
+}
+
 export function FilterScript() {
   return (
     <script

@@ -12,6 +12,32 @@ export const RECORDS = [
 
 export type RecordRoute = (typeof RECORDS)[number];
 
+const plural = (n: number, one: string, many = `${one}S`) => `${n} ${n === 1 ? one : many}`;
+
+/**
+ * What each record actually holds, for the index. Counted from content —
+ * never asserted. Empty says EMPTY.
+ */
+export function recordExtents(counts: {
+  builds: number;
+  service: number;
+  essays: number;
+  now: number;
+  plates: number;
+  systemVersion: string;
+}): Record<string, string> {
+  const record = counts.builds + counts.service;
+  return {
+    "/record/": record === 0 ? "EMPTY" : plural(record, "ENTRY", "ENTRIES"),
+    "/doctrine/": counts.essays === 0 ? "EMPTY" : plural(counts.essays, "PAPER"),
+    "/now/": counts.now === 0 ? "EMPTY" : plural(counts.now, "SEASON"),
+    "/credentials/": "1 LICENCE",
+    "/signal/": "OPEN",
+    "/system/": `V${counts.systemVersion}`,
+    "/archive/": counts.plates === 0 ? "EMPTY" : plural(counts.plates, "PLATE"),
+  };
+}
+
 export function pager(href: RecordRoute["href"]) {
   const i = RECORDS.findIndex((r) => r.href === href);
   return {

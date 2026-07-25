@@ -1,7 +1,11 @@
 import { RECORDS } from "@/lib/records";
 
-/** The home INDEX — a dense mono catalogue of the seven other records. */
-export default function RecordIndex() {
+/**
+ * The home INDEX — a dense mono catalogue of the seven other records.
+ * Each row carries its extent, so the catalogue says what is inside a
+ * record before you open it. Empty reads EMPTY; nothing is padded.
+ */
+export default function RecordIndex({ extents }: { extents: Record<string, string> }) {
   return (
     <section id="index" aria-label="Index of records">
       <div className="wrap">
@@ -12,6 +16,7 @@ export default function RecordIndex() {
               <span className="index-num">§ {r.num}</span>
               <span className="index-name">{r.name}</span>
               <span className="index-contains">{r.contains}</span>
+              <span className="index-extent">{extents[r.href] ?? ""}</span>
               <span className="index-arrow" aria-hidden="true">
                 →
               </span>

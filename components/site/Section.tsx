@@ -1,3 +1,5 @@
+import { RECORDS } from "@/lib/records";
+
 type SectionProps = {
   id: string;
   num: string;
@@ -7,13 +9,14 @@ type SectionProps = {
   children: React.ReactNode;
 };
 
-/** The record pattern: mono label `§ 0N — NAME` with hairline rule → serif heading → content. */
+/** The record pattern: mono label `§ 0N / 08 — NAME` with hairline rule → serif heading → content. */
 export default function Section({ id, num, name, heading, intro, children }: SectionProps) {
+  const total = String(RECORDS.length).padStart(2, "0");
   return (
     <section id={id} aria-labelledby={`h-${id}`}>
       <div className="wrap">
         <div className="sec-label">
-          § {num} — {name}
+          § {num} / {total} — {name}
         </div>
         <h2 id={`h-${id}`}>{heading}</h2>
         {intro ? <p className="sec-intro">{intro}</p> : null}

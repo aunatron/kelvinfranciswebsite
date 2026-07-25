@@ -97,6 +97,11 @@ export default function Attestation({ attest }: { attest: AttestData }) {
           </div>
         </div>
       </div>
+
+      {/* Where the file starts. A filing instruction, not an invitation. */}
+      <a className="begin" href="/record/">
+        BEGIN <span aria-hidden="true">→</span> § 02 — THE RECORD
+      </a>
     </header>
   );
 }
