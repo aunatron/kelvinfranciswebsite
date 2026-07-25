@@ -66,7 +66,7 @@ export function FilterScript() {
     <script
       id="kf-filter"
       dangerouslySetInnerHTML={{
-        __html: `(function(){var chips=document.querySelectorAll(".chip[data-filter]");if(!chips.length)return;chips.forEach(function(chip){chip.addEventListener("click",function(){var f=chip.dataset.filter;chips.forEach(function(c){c.classList.toggle("on",c===chip);});document.querySelectorAll(".essay").forEach(function(row){row.hidden=!(f==="all"||row.dataset.modeTag===f||row.dataset.grade===f);});});});})();`,
+        __html: `(function(){var chips=document.querySelectorAll(".chip[data-filter]");if(!chips.length)return;var out=document.querySelector("[data-filter-count]");var total=out?+out.dataset.total:0;chips.forEach(function(chip){chip.addEventListener("click",function(){var f=chip.dataset.filter;chips.forEach(function(c){c.classList.toggle("on",c===chip);});var shown=0;document.querySelectorAll(".essay").forEach(function(row){var hit=f==="all"||row.dataset.modeTag===f||row.dataset.grade===f;row.hidden=!hit;if(hit)shown++;});if(out){out.textContent=f==="all"?total+(total===1?" PAPER":" PAPERS"):shown+" OF "+total;}});});})();`,
       }}
     />
   );

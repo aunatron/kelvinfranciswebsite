@@ -30,6 +30,9 @@ export default function Doctrine({ essays }: { essays: EssayDoc[] }) {
             {label}
           </button>
         ))}
+        <span className="filter-count" data-filter-count data-total={essays.length}>
+          {essays.length} {essays.length === 1 ? "PAPER" : "PAPERS"}
+        </span>
       </div>
 
       <EssayList essays={essays} />

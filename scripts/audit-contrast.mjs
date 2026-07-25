@@ -141,8 +141,13 @@ for (const { selector, body } of allRules) {
   const bg = body.match(/(?:^|[\s;])background(?:-color)?\s*:\s*([^;]+)/)?.[1];
   if (!bg) continue;
   if (/--ink-raised/.test(bg)) {
+    // Replaced elements (img, video…) cannot contain text, so a background on
+    // one never becomes a ground for glyphs — e.g. `.plate img` reserving its
+    // box. Only elements that can hold text count as raised surfaces.
+    const last = selector.split(/[\s>]+/).pop() ?? "";
+    const replaced = /^(img|svg|video|canvas|iframe|input|picture)\b/.test(last);
     const cls = selector.split(/[\s,>]+/).find((s) => s.startsWith("."));
-    if (cls) foundRaised.add(cls);
+    if (cls && !replaced) foundRaised.add(cls);
   }
   // A mode may re-ground a panel (hunter flattens them onto the page ink).
   const mode = selector.match(/\[data-mode="(\w+)"\]/)?.[1];

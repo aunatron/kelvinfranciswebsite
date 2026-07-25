@@ -643,6 +643,17 @@ h2 em {
   color: var(--gold);
   border-color: var(--gold-rule);
 }
+.filter-count {
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: .14em;
+  color: var(--bone-faint);
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-left: var(--space-3);
+  white-space: nowrap;
+}
 .essays {
   border-top: 1px solid var(--ink-line);
 }
@@ -754,7 +765,8 @@ h2 em {
   color: var(--bone-dim);
   border: 1px dashed var(--ink-line);
   padding: var(--space-2) var(--space-3);
-  white-space: nowrap;
+  /* Wraps rather than forcing horizontal scroll once the tallies grow. */
+  max-width: 100%;
 }
 
 /* ─── NOW (R-04) ─── */
@@ -1021,9 +1033,14 @@ h2 em {
   padding: var(--space-3);
 }
 .plate img {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
   display: block;
+  /* The plate reserves its box before the image arrives, so CLS stays 0 no
+     matter what dimensions the source has. Uniform plates are correct for an
+     archive anyway — these are exhibits, not a feed. */
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--ink-raised);
 }
 .plate-clip {
   display: block;
