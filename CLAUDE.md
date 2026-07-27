@@ -25,6 +25,13 @@ describing it.*
 
 **Full specification:** `_local/BUILD-PROMPT.md` (gitignored — read it, never commit it).
 
+**ELEVATION DIRECTIVE (2026-07-27, Kelvin-approved):** read
+`docs/ELEVATION_PLAN.md` immediately after this file. It amends the palette
+(primary gold → `#F2B705`, aged `#B0902E` demoted to a tier) and sanctions the
+story layer (HoloArt scenes + motion contract) within this project's doctrine.
+Load skills `premium-web-craft`, `holoart`, `aurum-brand-system`,
+`kf-sigil-system` before any visual work.
+
 ---
 
 ## HARD RULES — never violate
