@@ -72,10 +72,12 @@ Audit-verified against WCAG AA. **Do not substitute values.**
 :root{
   --ink:#0E0C09; --ink-raised:#17130D; --ink-line:#241E15;
 
-  --gold:#B0902E;        /* 6.05 ✓ accent, links */
-  --gold-bright:#D0AB39; /* 8.43 ✓ hover, active */
-  --gold-dim:#947A2F;    /* 4.48 ✓ small label text */
-  --gold-rule:#6E5C23;   /* 2.83 — BORDERS ONLY, never text */
+  /* METAL — hue-locked 45.1°. Amended by ELEVATION_PLAN E1 (2026-07-27). */
+  --gold:#F2B705;        /* 10.17 ✓ accent, links — AURUM-H primary */
+  --gold-bright:#FFCC33; /* 12.28 ✓ hover, active — the step above primary */
+  --gold-aged:#B0902E;   /*  6.05 ✓ restrained moments (the former primary) */
+  --gold-dim:#947A2F;    /*  4.48 ✓ small label text */
+  --gold-rule:#6E5C23;   /*  2.83 — BORDERS ONLY, never text */
 
   --bone:#EDE6D6;        /* 14.88 ✓ body */
   --bone-dim:#A79E8C;    /*  6.97 ✓ secondary */
@@ -96,11 +98,16 @@ Audit-verified against WCAG AA. **Do not substitute values.**
   --leading-tight:1.1; --leading-body:1.6; --leading-essay:1.7;
   --measure:68ch; --measure-tight:46ch; --tap:44px;
   --ease:cubic-bezier(.2,.8,.3,1);
+
+  /* EASING TIERS — arrivals spring, exits/utility take the machine curve. */
+  --ease-spring:cubic-bezier(.34,1.3,.4,1); --ease-exit:cubic-bezier(.4,0,.2,1);
+  --dur-arrive:.62s; --dur-fade:.5s;
 }
 
 /* MODE ENGINE — one attribute, whole page shifts */
 [data-mode="hunter"]{
-  --gold:#917B39; --gold-bright:#B0902E; --bone:#E2DCCB; --leading-essay:1.55;
+  --gold:#917B39; --gold-bright:#B0902E; --gold-aged:#917B39;
+  --bone:#E2DCCB; --leading-essay:1.55;
 }
 ```
 

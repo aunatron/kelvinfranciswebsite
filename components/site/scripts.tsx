@@ -49,6 +49,24 @@ export function HoloScript() {
   );
 }
 
+/**
+ * The motion island — E2.3. The ONLY thing that applies the hidden state
+ * (`.is-armed`), so every path that never runs it (JS off, crawler, reduced
+ * motion) renders the page finished and static. Elements already on screen
+ * at load are left untouched: motion is for arrivals, not for re-staging
+ * what the reader can already see.
+ */
+export function RevealScript() {
+  return (
+    <script
+      id="kf-motion"
+      dangerouslySetInnerHTML={{
+        __html: `(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(!window.IntersectionObserver)return;var els=document.querySelectorAll("[data-reveal]");if(!els.length)return;var vh=window.innerHeight,pend=[];for(var i=0;i<els.length;i++){var el=els[i];if(el.getBoundingClientRect().top<vh*0.92)continue;el.classList.add("is-armed");pend.push(el);}if(!pend.length)return;var io=new IntersectionObserver(function(en){for(var j=0;j<en.length;j++){if(!en[j].isIntersecting)continue;en[j].target.classList.add("is-in");io.unobserve(en[j].target);}},{rootMargin:"0px 0px -12% 0px"});for(var k=0;k<pend.length;k++){io.observe(pend[k]);}})();`,
+      }}
+    />
+  );
+}
+
 /** Arrow keys walk the dossier in order, using the pager's own links. */
 export function PagerKeysScript() {
   return (

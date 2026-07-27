@@ -1609,3 +1609,71 @@ html.rupture *::after {
     transition-duration: .01ms !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTION LAYER — E2.3 (docs/ELEVATION_PLAN.md)
+
+   One contract, two halves:
+
+   1. Arrivals. `data-reveal` marks a block as animatable. The hidden
+      state lives on `.is-armed`, which ONLY the kf-motion island ever
+      applies — so with JS off, with a crawler, or under reduced motion
+      (the island returns early) the markup renders finished and static.
+      Nothing is hidden by CSS alone. That is what keeps "fully readable
+      with JavaScript disabled" true.
+   2. Scroll dopamine. The reading-progress hairline is pure CSS via
+      `animation-timeline: scroll(root)` — zero JS, gated behind
+      @supports and prefers-reduced-motion.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-reveal].is-armed {
+  opacity: 0;
+  /* Whole px: the arrival lands on the pixel grid, never mid-subpixel. */
+  transform: translateY(14px);
+}
+
+[data-reveal].is-armed.is-in {
+  opacity: 1;
+  transform: none;
+  /* Arrivals spring; the fade rides the decisive curve so nothing snaps.
+     --rv-i staggers a row against its siblings; capped at 6 so a long
+     ledger never turns into a queue the reader has to wait out. */
+  transition:
+    opacity var(--dur-fade) var(--ease-exit),
+    transform var(--dur-arrive) var(--ease-spring);
+  transition-delay: calc(min(var(--rv-i, 0), 6) * 55ms);
+}
+
+/* Reading-progress hairline. Sits above the sticky nav (z 60) so the
+   measure of the read is never occluded. Fixed — it cannot shift layout. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      z-index: 61;
+      pointer-events: none;
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+      background: linear-gradient(to right, var(--gold-aged), var(--gold));
+      /* Longhands on purpose: the `animation` shorthand resets duration to
+         0s, which makes a timeline-driven animation snap to its end state
+         instead of tracking the scroller. `auto` maps it to the timeline. */
+      animation-name: kf-progress;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+@keyframes kf-progress {
+  to {
+    transform: scaleX(1);
+  }
+}

@@ -19,13 +19,15 @@ function cap(s: string) {
 export default function EssayList({ essays }: { essays: EssayDoc[] }) {
   return (
     <div className="essays">
-      {essays.map((e) => (
+      {essays.map((e, i) => (
         <a
           key={e.slug}
           className="essay"
           href={`/doctrine/${e.slug}/`}
           data-mode-tag={e.mode}
           data-grade={e.grade}
+          data-reveal
+          style={{ "--rv-i": i } as React.CSSProperties}
         >
           <span className="e-rec">{e.record}</span>
           <span className="e-title">{e.title}</span>

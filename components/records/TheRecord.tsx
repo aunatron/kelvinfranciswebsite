@@ -3,9 +3,9 @@ import Verify, { VerifyBoundary } from "@/components/ui/Verify";
 import type { Sourced } from "@/lib/content";
 import type { RecordEntry } from "@/lib/validate";
 
-function LedgerRow({ entry }: { entry: Sourced<RecordEntry> }) {
+function LedgerRow({ entry, i }: { entry: Sourced<RecordEntry>; i: number }) {
   return (
-    <div className="led-row">
+    <div className="led-row" data-reveal style={{ "--rv-i": i } as React.CSSProperties}>
       <span className="led-year">{entry.year}</span>
       <span>
         <span className="led-name">{entry.name}</span>
@@ -29,8 +29,8 @@ function Ledger({ entries, emptyLine }: { entries: Sourced<RecordEntry>[]; empty
   }
   return (
     <div className="ledger">
-      {entries.map((e) => (
-        <LedgerRow key={e.source.path} entry={e} />
+      {entries.map((e, i) => (
+        <LedgerRow key={e.source.path} entry={e} i={i} />
       ))}
     </div>
   );

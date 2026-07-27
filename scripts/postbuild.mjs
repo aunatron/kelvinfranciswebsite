@@ -12,7 +12,7 @@ import { join } from "node:path";
 
 const OUT = "out";
 const JS_BUDGET_BYTES = 30 * 1024;
-const KEEP_SCRIPT_IDS = ["kf-mode", "kf-filter", "kf-verify", "kf-attest", "kf-holo", "kf-keys"];
+const KEEP_SCRIPT_IDS = ["kf-mode", "kf-filter", "kf-verify", "kf-attest", "kf-holo", "kf-keys", "kf-motion"];
 
 function* walk(dir) {
   for (const entry of readdirSync(dir)) {

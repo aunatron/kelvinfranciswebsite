@@ -3,6 +3,7 @@ import "@/styles/fonts.css";
 import "@/styles/tokens.css";
 import "./globals.css";
 import { site } from "@/lib/site";
+import { RevealScript } from "@/components/site/scripts";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -34,6 +35,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         {children}
+        <RevealScript />
         <script
           id="kf-mode"
           dangerouslySetInnerHTML={{
