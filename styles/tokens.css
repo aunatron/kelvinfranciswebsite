@@ -36,6 +36,7 @@
   --space-8: 4rem;
   --space-9: 6rem;
   --space-10: 8rem;
+  --scene-max: 52.25rem; /* half of the 1672px source: sharp on a 2x display */
 
   /* TYPE */
   --text-2xs: .6875rem; /* 11px — mono floor, never smaller */

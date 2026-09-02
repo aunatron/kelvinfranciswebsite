@@ -6,6 +6,7 @@ import Verify from "@/components/ui/Verify";
 import { VerifyScript } from "@/components/site/scripts";
 import { getEssays } from "@/lib/content";
 import { site } from "@/lib/site";
+import { pageMetadata } from "@/lib/metadata";
 
 export function generateStaticParams() {
   return getEssays().map((e) => ({ slug: e.slug }));
@@ -19,10 +20,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const essay = getEssays().find((e) => e.slug === slug);
   if (!essay) return {};
-  return {
-    title: `${essay.record} — ${essay.title}`,
-    description: essay.summary,
-  };
+  return pageMetadata(
+    `${essay.record} · ${essay.title}`,
+    essay.summary,
+    `/doctrine/${essay.slug}/`
+  );
 }
 
 const GRADE_LABEL = {
@@ -69,10 +71,22 @@ export default async function EssayPage({
           <div className="essay-body">
             <MDXRemote source={essay.body} />
           </div>
+          {essay.sources.length > 0 ? (
+            <div className="essay-sources">
+              <h2>Sources</h2>
+              <ul>
+                {essay.sources.map((source) => (
+                  <li key={source.url}>
+                    <a href={source.url}>{source.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           <Verify sources={[essay.source]} />
           <p className="split page-back">
             <a className="mono-link" href="/doctrine/">
-              ← § 03 — Doctrine
+              ← § 03 · Doctrine
             </a>
           </p>
         </article>

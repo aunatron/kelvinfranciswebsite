@@ -1,13 +1,13 @@
 /**
  * Lighthouse gate — mobile, on the built output.
- * Floors: performance ≥ 95, accessibility 100, best-practices 100, SEO 100.
+ * Floors: 100 in all four categories, observed LCP under one second, CLS 0.
  * Below any floor, the build is rejected.
  */
 import lighthouse from "lighthouse";
 import puppeteer from "puppeteer";
 import { serveOut, ROUTES } from "./serve-out.mjs";
 
-const FLOORS = { performance: 95, accessibility: 100, "best-practices": 100, seo: 100 };
+const FLOORS = { performance: 100, accessibility: 100, "best-practices": 100, seo: 100 };
 /* One representative page per shape: cover sheet, ledger, filtered index,
    hunter essay, computed page. Auditing all ten costs minutes for no signal. */
 const SAMPLE = ["/", "/record/", "/doctrine/", "/doctrine/hunt-001/", "/track-record/"];
@@ -26,14 +26,16 @@ for (const route of SAMPLE) {
     Object.entries(lhr.categories).map(([k, v]) => [k, Math.round((v.score ?? 0) * 100)])
   );
   const cls = lhr.audits["cumulative-layout-shift"].numericValue;
+  const observedLcp = lhr.audits.metrics.details.items[0].observedLargestContentfulPaint;
   console.log(
-    `${route.padEnd(24)} perf ${scores.performance} · a11y ${scores.accessibility} · bp ${scores["best-practices"]} · seo ${scores.seo} · CLS ${cls}`
+    `${route.padEnd(24)} perf ${scores.performance} · a11y ${scores.accessibility} · bp ${scores["best-practices"]} · seo ${scores.seo} · observed LCP ${Math.round(observedLcp)}ms · CLS ${cls}`
   );
   for (const [cat, floor] of Object.entries(FLOORS)) {
     if (scores[cat] < floor) failures.push(`${route}: ${cat} ${scores[cat]} < ${floor}`);
   }
   // CLS is doctrine here, not preference.
   if (cls > 0) failures.push(`${route}: CLS ${cls} — the bar is 0`);
+  if (observedLcp >= 1000) failures.push(`${route}: observed LCP ${observedLcp}ms >= 1000ms`);
 }
 
 await browser.close();

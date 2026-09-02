@@ -1,22 +1,37 @@
 ---
 record: HUNT-001
 title: "Reading an attack surface like the adversary does."
-date: "2026-07-24"
+date: "2026-09-02"
 mode: hunter
 grade: fact
 horizon: now
-status: draft
+status: published
 tags: [security]
 resolution: open
-summary: "A defensive walkthrough of how an attack surface reads from the outside — and what that view changes about defence."
+summary: "A defensive method for seeing exposed systems from the outside and deciding what to reduce first."
+sources:
+  - label: "OWASP Attack Surface Analysis Cheat Sheet"
+    url: "https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html"
+  - label: "NIST Cybersecurity Framework 2.0"
+    url: "https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20"
 ---
 
-> DRAFT — replace before launch.
+An attack surface is the sum of the places where a person or process can enter, extract from, or affect a system. Defenders often see those places as an inventory. An adversary sees them as a sequence of opportunities.
 
-[NEEDS INPUT: essay body. Placeholder paragraph one — how an attack surface
-reads from the outside, defensive framing only, to be written in Kelvin's
-voice.]
+The useful exercise is not to imitate criminal intent. It is to remove the comfort of the internal view. Begin with what an unauthenticated outsider can observe: domains, public services, login paths, exposed documents, third-party dependencies, employee information, and the messages the organisation publishes about its own technology.
 
-[NEEDS INPUT: essay body. Placeholder paragraph two — what the adversary's
-view changes about how defence is prioritised, to be written in Kelvin's
-voice.]
+## Follow the path, not the product list
+
+A vulnerable component matters, but an exploitable path matters more. Ask what the exposed component touches, which identity it trusts, what data it can reach, and whether one failure can be chained into another.
+
+This changes prioritisation. A severe flaw on an isolated test host may deserve less immediate attention than a moderate weakness on an internet-facing identity system. Asset criticality, reachability, privilege, and business consequence belong in the same decision.
+
+OWASP recommends revisiting the attack surface when the threat model changes. NIST's Cybersecurity Framework places this work inside a wider cycle of governance, identification, protection, detection, response, and recovery. The inventory is not a one-time document. It is a maintained view of where the organisation can be affected.
+
+## Reduce ambiguity first
+
+Unknown ownership, forgotten services, shared administrator accounts, and undocumented data flows are security problems before a scanner reports a vulnerability. They slow decisions when pressure is highest.
+
+A practical defensive pass should therefore end with fewer unknowns: an owner for every exposed service, a reason for its exposure, an authentication boundary, a record of the data it can reach, and a decision to remove anything that no longer earns its place.
+
+The adversary's advantage is often not superior technology. It is the willingness to look at the whole path. Defence improves when it does the same, within explicit authorisation and with a record of every action taken.

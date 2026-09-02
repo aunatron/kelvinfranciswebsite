@@ -3,6 +3,8 @@ _local/
 
 # Local tooling
 .claude/
+.vercel/
+*.tsbuildinfo
 
 # Generated at prebuild from @fontsource packages
 public/fonts/

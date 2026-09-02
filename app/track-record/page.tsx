@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
 import Shell from "@/components/site/Shell";
 import { getReckoning } from "@/lib/reckoning";
 import { site } from "@/lib/site";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: `Track Record · ${site.name}`,
-  description:
-    "Every resolved call, misses listed first. Withdrawn shown, not counted.",
-};
+export const metadata = pageMetadata(
+  `Track Record · ${site.name}`,
+  "Every resolved call, misses listed first. Withdrawn shown, not counted.",
+  "/track-record/"
+);
 
 const RES_LABEL = {
   wrong: "WRONG",
@@ -22,7 +22,7 @@ export default function TrackRecordPage() {
   return (
     <Shell>
       <div className="wrap page">
-        <div className="sec-label">§ 03 · TRACK RECORD — THE RECKONING</div>
+        <div className="sec-label">§ 03 · TRACK RECORD · THE RECKONING</div>
         <h1 className="page-h">Misses first.</h1>
 
         <div className="score">
@@ -31,7 +31,7 @@ export default function TrackRecordPage() {
             <p>
               {r.hitRate === null ? (
                 <>
-                  <span className="mono score-when">—</span> · no resolved
+                  <span className="mono score-when">0</span> · no resolved
                   calls yet. First Reckoning:{" "}
                   <span className="mono score-when">Q4 2026</span>.
                 </>
@@ -69,7 +69,7 @@ export default function TrackRecordPage() {
 
         {r.withdrawn.length > 0 ? (
           <>
-            <div className="sub-label">WITHDRAWN — DISPLAYED, NOT COUNTED</div>
+            <div className="sub-label">WITHDRAWN · DISPLAYED, NOT COUNTED</div>
             <div className="essays">
               {r.withdrawn.map((e) => (
                 <a key={e.slug} className="essay" href={`/doctrine/${e.slug}/`}>
@@ -89,12 +89,12 @@ export default function TrackRecordPage() {
           <br />
           Withdrawn is excluded from the math and displayed all the same.
           <br />
-          Wrong and correct get identical treatment — no green, no red.
+          Wrong and correct get identical treatment: no green, no red.
         </div>
 
         <p className="split page-back">
           <a className="mono-link" href="/doctrine/">
-            ← § 03 — Doctrine
+            ← § 03 · Doctrine
           </a>
         </p>
       </div>

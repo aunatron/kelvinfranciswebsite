@@ -18,7 +18,9 @@ export default function Verify({ sources }: { sources: Provenance[] }) {
       data-verify={payload}
     >
       <b>VERIFY</b>
-      <span data-verify-state> → commit history</span>
+      <span data-verify-state aria-live="polite">
+        {" "}→ commit history
+      </span>
     </a>
   );
 }
@@ -27,9 +29,9 @@ export default function Verify({ sources }: { sources: Provenance[] }) {
 export function VerifyBoundary() {
   return (
     <p className="fine verify-note">
-      This checks that the page matches its public source at that commit. It
-      does not prove the content is true — that&rsquo;s what the grades and
-      the track record are for.
+      This checks that the content records behind this page match their public
+      source at that commit. It does not verify the deployed interface or prove
+      the claims true. That is what the grades and track record are for.
       <br />
       The repository is hosted under the Aunatron Systems account. I am the
       sole operator of both.

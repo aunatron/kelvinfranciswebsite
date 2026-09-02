@@ -1,8 +1,9 @@
 import Shell from "@/components/site/Shell";
 import Attestation from "@/components/records/Attestation";
 import RecordIndex from "@/components/site/RecordIndex";
-import { AttestScript, HoloScript } from "@/components/site/scripts";
-import { getAllContent, getDossierAttestation } from "@/lib/content";
+import HoloArt from "@/components/holo/HoloArt";
+import { AttestScript, HoloArtScript, HoloAudioScript } from "@/components/site/scripts";
+import { getAllContent, getAttestation, getDossierAttestation } from "@/lib/content";
 import { recordExtents } from "@/lib/records";
 import { site, repoUrl } from "@/lib/site";
 
@@ -40,11 +41,15 @@ export default function Home() {
   return (
     <>
       <Shell current="/">
-        <Attestation attest={attest} />
+        <Attestation attest={attest} record={getAttestation()} />
+        {/* Below the attestation on purpose: a scene must never be the LCP
+            element, which is what lets it load lazily and honestly. */}
+        <HoloArt commit={attest.commit} sources={attest.files.length} />
         <RecordIndex extents={extents} />
       </Shell>
       <AttestScript />
-      <HoloScript />
+      <HoloArtScript />
+      <HoloAudioScript />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

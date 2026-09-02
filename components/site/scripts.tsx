@@ -2,7 +2,7 @@ import { site } from "@/lib/site";
 
 /**
  * Per-page inline native scripts. The framework runtime is stripped at
- * postbuild, so these ids are the allowlist — include each script only on
+ * postbuild, so these ids are the allowlist. Include each script only on
  * pages that need it.
  */
 
@@ -11,57 +11,67 @@ export function VerifyScript() {
     <script
       id="kf-verify"
       dangerouslySetInnerHTML={{
-        __html: `(function(){var RAW="https://raw.githubusercontent.com/${site.githubOwner}/${site.repo}/";var TREE="https://github.com/${site.githubOwner}/${site.repo}/tree/";function hex(buf){var a=new Uint8Array(buf),s="";for(var i=0;i<a.length;i++){s+=a[i].toString(16).padStart(2,"0");}return s;}document.querySelectorAll("a.verify[data-verify]").forEach(function(el){el.addEventListener("click",async function(e){if(el.dataset.done==="fail")return;e.preventDefault();if(el.dataset.busy)return;var commit=el.dataset.commit;var files=JSON.parse(el.dataset.verify);var state=el.querySelector("[data-verify-state]");var key="kfv:"+commit+":"+files.map(function(f){return f.p;}).join("|");var short=commit.slice(0,7);function ok(){el.classList.add("ok");el.classList.remove("fail");state.textContent=" VERIFIED \\u2713 "+short;}function fail(){el.classList.add("fail");el.classList.remove("ok");state.textContent=" UNVERIFIED \\u2014 check manually";el.dataset.done="fail";el.href=TREE+commit;}var cached=null;try{cached=sessionStorage.getItem(key);}catch(_){ }if(cached==="ok"){ok();return;}if(!window.crypto||!crypto.subtle||commit==="UNCOMMITTED"||files.length===0){fail();return;}el.dataset.busy="1";state.textContent=" CHECKING\\u2026";try{for(var i=0;i<files.length;i++){var r=await fetch(RAW+commit+"/"+files[i].p,{cache:"no-store"});if(!r.ok)throw 0;var d=await crypto.subtle.digest("SHA-256",await r.arrayBuffer());if(hex(d)!==files[i].h)throw 0;}try{sessionStorage.setItem(key,"ok");}catch(_){ }ok();}catch(_){fail();}delete el.dataset.busy;});});})();`,
+        __html: `(function(){var RAW="https://raw.githubusercontent.com/${site.githubOwner}/${site.repo}/";var TREE="https://github.com/${site.githubOwner}/${site.repo}/tree/";function hex(buf){var a=new Uint8Array(buf),s="";for(var i=0;i<a.length;i++){s+=a[i].toString(16).padStart(2,"0");}return s;}document.querySelectorAll("a.verify[data-verify]").forEach(function(el){el.addEventListener("click",function(e){if(el.dataset.done)return;e.preventDefault();if(el.dataset.busy)return;var commit=el.dataset.commit;var files=JSON.parse(el.dataset.verify);var state=el.querySelector("[data-verify-state]");var key="kfv:"+commit+":"+files.map(function(f){return f.p;}).join("|");var short=commit.slice(0,7);function done(ok){el.classList.remove(ok?"fail":"ok");el.classList.add(ok?"ok":"fail");state.textContent=ok?" VERIFIED \\u2713 "+short:" UNVERIFIED \\u00b7 check manually";el.dataset.done=ok?"ok":"fail";el.href=TREE+commit;delete el.dataset.busy;}async function check(){try{var cached=null;try{cached=sessionStorage.getItem(key);}catch(_){ }if(cached==="ok")return true;if(!window.crypto||!crypto.subtle||commit==="UNCOMMITTED"||files.length===0)return false;for(var i=0;i<files.length;i++){var r=await fetch(RAW+commit+"/"+files[i].p,{cache:"no-store"});if(!r.ok)throw 0;var d=await crypto.subtle.digest("SHA-256",await r.arrayBuffer());if(hex(d)!==files[i].h)throw 0;}try{sessionStorage.setItem(key,"ok");}catch(_){ }return true;}catch(_){return false;}}el.dataset.busy="1";state.textContent=" CHECKING\\u2026";var timeout=new Promise(function(resolve){setTimeout(function(){resolve(false);},8000);});Promise.race([check(),timeout]).then(done);});});})();`,
       }}
     />
   );
 }
 
 /**
- * Moment A — the Live Attestation. Re-fetches every content source pinned
- * to the built commit, re-hashes each, recomputes the dossier digest, and
- * stamps the seal only when everything matches. Any failure = UNVERIFIED.
+ * Moment A, the Live Attestation. Verification is deliberately on demand:
+ * no request runs until the reader activates the seal. The browser then
+ * re-fetches every pinned content source, recomputes the dossier digest,
+ * and stamps the seal only when the result matches.
  */
 export function AttestScript() {
   return (
     <script
       id="kf-attest"
       dangerouslySetInnerHTML={{
-        __html: `(function(){var panel=document.querySelector("[data-attest-panel]");if(!panel)return;var seal=panel.querySelector("[data-attest-seal]");var state=panel.querySelector("[data-seal-state]");var commit=panel.dataset.commit;var digest=panel.dataset.digest;var files=JSON.parse(panel.dataset.files);var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;var RAW="https://raw.githubusercontent.com/${site.githubOwner}/${site.repo}/";panel.classList.add("attest-live");state.textContent="CHECKING\\u2026";function hex(buf){var a=new Uint8Array(buf),s="";for(var i=0;i<a.length;i++){s+=a[i].toString(16).padStart(2,"0");}return s;}var key="kfa:"+commit;var check=(async function(){try{var cached=null;try{cached=sessionStorage.getItem(key);}catch(_){ }if(cached==="ok")return true;if(!window.crypto||!crypto.subtle||commit==="UNCOMMITTED"||!files.length)return false;var pairs=await Promise.all(files.map(async function(f){var r=await fetch(RAW+commit+"/"+f.p,{cache:"no-store"});if(!r.ok)throw 0;var h=hex(await crypto.subtle.digest("SHA-256",await r.arrayBuffer()));if(h!==f.h)throw 0;return f.p+":"+h;}));pairs.sort();var d=hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pairs.join("\\n"))));if(d!==digest)return false;try{sessionStorage.setItem(key,"ok");}catch(_){ }return true;}catch(_){return false;}})();var wait=new Promise(function(r){setTimeout(r,reduce?0:2100);});Promise.all([check,wait]).then(function(res){var ok=res[0];state.textContent=ok?"VERIFIED \\u2713 "+commit.slice(0,7):"UNVERIFIED \\u2014 CHECK MANUALLY";seal.classList.add(ok?"ok":"fail");panel.classList.add("sealed");});})();`,
+        __html: `(function(){var panel=document.querySelector("[data-attest-panel]");if(!panel)return;var seal=panel.querySelector("[data-attest-seal]");var state=panel.querySelector("[data-seal-state]");if(!seal||!state)return;var commit=panel.dataset.commit;var digest=panel.dataset.digest;var files=JSON.parse(panel.dataset.files);var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;var RAW="https://raw.githubusercontent.com/${site.githubOwner}/${site.repo}/";function hex(buf){var a=new Uint8Array(buf),s="";for(var i=0;i<a.length;i++){s+=a[i].toString(16).padStart(2,"0");}return s;}async function check(){try{var key="kfa:"+commit,cached=null;try{cached=sessionStorage.getItem(key);}catch(_){ }if(cached==="ok")return true;if(!window.crypto||!crypto.subtle||commit==="UNCOMMITTED"||!files.length)return false;var pairs=await Promise.all(files.map(async function(f){var r=await fetch(RAW+commit+"/"+f.p,{cache:"no-store"});if(!r.ok)throw 0;var h=hex(await crypto.subtle.digest("SHA-256",await r.arrayBuffer()));if(h!==f.h)throw 0;return f.p+":"+h;}));pairs.sort();var d=hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pairs.join("\\n"))));if(d!==digest)return false;try{sessionStorage.setItem(key,"ok");}catch(_){ }return true;}catch(_){return false;}}seal.addEventListener("click",function(e){if(seal.dataset.done)return;e.preventDefault();if(seal.dataset.busy)return;seal.dataset.busy="1";panel.classList.add("attest-live");panel.classList.remove("sealed");state.textContent="CHECKING\\u2026";var timeout=new Promise(function(resolve){setTimeout(function(){resolve(false);},8000);});var wait=new Promise(function(resolve){setTimeout(resolve,reduce?0:900);});Promise.all([Promise.race([check(),timeout]),wait]).then(function(res){var ok=res[0];state.textContent=ok?"VERIFIED \\u2713 "+commit.slice(0,7):"UNVERIFIED \\u00b7 CHECK MANUALLY";seal.classList.remove(ok?"fail":"ok");seal.classList.add(ok?"ok":"fail");seal.dataset.done=ok?"ok":"fail";delete seal.dataset.busy;panel.classList.add("sealed");});});})();`,
       }}
     />
   );
 }
 
 /**
- * The holographic layer — mounts after first paint, occupies exactly the
- * sigil's box (zero CLS), and skips entirely on reduced motion, data-saver,
- * or coarse-pointer low-memory devices. Audio is opt-in, never autoplay.
- */
-export function HoloScript() {
-  return (
-    <script
-      id="kf-holo"
-      dangerouslySetInnerHTML={{
-        __html: `(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(navigator.connection&&navigator.connection.saveData)return;if(matchMedia("(pointer: coarse)").matches&&(navigator.deviceMemory||8)<=4)return;var sig=document.querySelector(".hero-sigil");var hero=document.querySelector(".hero-shell");if(!sig||!hero)return;requestAnimationFrame(function(){requestAnimationFrame(mount);});function el(c){var d=document.createElement("div");d.className=c;return d;}var NODES=[{x:50,y:16,f:440},{x:34,y:50,f:293.66},{x:66,y:50,f:349.23},{x:50,y:64,f:220}];var ctx=null,master=null,on=false;function panner(x,y,z){var p=ctx.createPanner();p.panningModel="HRTF";p.distanceModel="inverse";p.refDistance=1;p.maxDistance=18;p.rolloffFactor=1.1;var px=(x-50)/12,py=(50-y)/16;if(p.positionX){p.positionX.value=px;p.positionY.value=py;p.positionZ.value=z;}else{p.setPosition(px,py,z);}return p;}function drone(){var g=ctx.createGain();g.gain.value=.1;[110,164.81].forEach(function(f,i){var o=ctx.createOscillator();o.type="sine";o.frequency.value=f;var og=ctx.createGain();og.gain.value=i?.38:1;o.connect(og);og.connect(g);o.start();});var lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.frequency.value=.09;lg.gain.value=.035;lfo.connect(lg);lg.connect(g.gain);lfo.start();var p=panner(50,52,-2.6);g.connect(p);p.connect(master);}function strike(n){if(!ctx)return;var t=ctx.currentTime,g=ctx.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.34,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+2.4);[[1,1],[2,.28],[3.02,.14],[4.1,.06]].forEach(function(pr){var o=ctx.createOscillator();o.type="sine";o.frequency.value=n.f*pr[0];var og=ctx.createGain();og.gain.value=pr[1];o.connect(og);og.connect(g);o.start(t);o.stop(t+2.5);});var p=panner(n.x,n.y,-1.2);g.connect(p);p.connect(master);}function initAudio(){ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=0;master.connect(ctx.destination);var L=ctx.listener;if(L.positionX){L.positionX.value=0;L.positionY.value=0;L.positionZ.value=0;L.forwardX.value=0;L.forwardY.value=0;L.forwardZ.value=-1;L.upY.value=1;}else if(L.setPosition){L.setPosition(0,0,0);L.setOrientation(0,0,-1,0,1,0);}drone();master.gain.linearRampToValueAtTime(.5,ctx.currentTime+1.2);}function mount(){var rect=sig.getBoundingClientRect();var mb=getComputedStyle(sig).marginBottom;var wrap=el("holo-wrap");wrap.style.width=rect.width+"px";wrap.style.height=rect.height+"px";wrap.style.marginBottom=mb;sig.parentNode.insertBefore(wrap,sig);sig.style.margin="0";var rig=el("holo-rig");["back","cyan","core","mag","front"].forEach(function(k){var l=el("holo-layer hl-"+k);if(k==="core"){l.appendChild(sig);}else{var c=sig.cloneNode(true);c.classList.remove("sigil-draw");c.removeAttribute("role");c.setAttribute("aria-hidden","true");l.appendChild(c);}rig.appendChild(l);});wrap.appendChild(el("holo-floor"));wrap.appendChild(el("holo-sweep"));wrap.appendChild(rig);wrap.appendChild(el("holo-scan"));var btn=document.createElement("button");btn.type="button";btn.className="holo-audio";var pref=null;try{pref=localStorage.getItem("kf-audio");}catch(_){ }btn.textContent=pref==="on"?"SPATIAL AUDIO \\u2014 RESUME":"SPATIAL AUDIO \\u2014 OFF";wrap.appendChild(btn);btn.addEventListener("click",function(){if(!on){if(!ctx){initAudio();}else{ctx.resume();master.gain.linearRampToValueAtTime(.5,ctx.currentTime+.8);}on=true;btn.textContent="SPATIAL AUDIO \\u2014 ON";btn.classList.add("on");NODES.forEach(function(n,i){setTimeout(function(){strike(n);},380+i*430);});try{localStorage.setItem("kf-audio","on");}catch(_){ }}else{master.gain.linearRampToValueAtTime(0,ctx.currentTime+.5);on=false;btn.textContent="SPATIAL AUDIO \\u2014 OFF";btn.classList.remove("on");try{localStorage.setItem("kf-audio","off");}catch(_){ }}});hero.addEventListener("pointermove",function(e){var r=hero.getBoundingClientRect();var yaw=((e.clientX-r.left)/r.width-.5)*28;var pitch=-((e.clientY-r.top)/r.height-.5)*18;rig.style.transform="rotateX("+pitch.toFixed(2)+"deg) rotateY("+yaw.toFixed(2)+"deg)";});hero.addEventListener("pointerleave",function(){rig.style.transform="";});}})();`,
-      }}
-    />
-  );
-}
-
-/**
- * The motion island — E2.3. The ONLY thing that applies the hidden state
- * (`.is-armed`), so every path that never runs it (JS off, crawler, reduced
- * motion) renders the page finished and static. Elements already on screen
- * at load are left untouched: motion is for arrivals, not for re-staging
- * what the reader can already see.
+ * The single reveal runtime. It is the only code that applies the hidden
+ * state, so no-JS, crawlers, and reduced-motion users see finished content.
  */
 export function RevealScript() {
   return (
     <script
       id="kf-motion"
       dangerouslySetInnerHTML={{
-        __html: `(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(!window.IntersectionObserver)return;var els=document.querySelectorAll("[data-reveal]");if(!els.length)return;var vh=window.innerHeight,pend=[];for(var i=0;i<els.length;i++){var el=els[i];if(el.getBoundingClientRect().top<vh*0.92)continue;el.classList.add("is-armed");pend.push(el);}if(!pend.length)return;var io=new IntersectionObserver(function(en){for(var j=0;j<en.length;j++){if(!en[j].isIntersecting)continue;en[j].target.classList.add("is-in");io.unobserve(en[j].target);}},{rootMargin:"0px 0px -12% 0px"});for(var k=0;k<pend.length;k++){io.observe(pend[k]);}})();`,
+        __html: `(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(!window.IntersectionObserver)return;var els=document.querySelectorAll("[data-reveal]");if(!els.length)return;var vh=window.innerHeight,pend=[];for(var i=0;i<els.length;i++){var el=els[i];if(el.getBoundingClientRect().top<vh*0.92)continue;el.classList.add("is-armed");pend.push(el);}if(!pend.length)return;var io=new IntersectionObserver(function(en){for(var j=0;j<en.length;j++){if(!en[j].isIntersecting)continue;en[j].target.classList.add("is-in");io.unobserve(en[j].target);}},{rootMargin:"0% 0% -12% 0%"});for(var k=0;k<pend.length;k++){io.observe(pend[k]);}})();`,
+      }}
+    />
+  );
+}
+
+/**
+ * HoloArt enhancement. The raster never moves. This adds one viewport-gated
+ * scan and durable tap-toggle state; hover and keyboard focus stay in CSS.
+ */
+export function HoloArtScript() {
+  return (
+    <script
+      id="kf-holoart"
+      dangerouslySetInnerHTML={{
+        __html: `(function(){var figs=document.querySelectorAll("[data-holo-art]");if(!figs.length)return;figs.forEach(function(fig){var buttons=fig.querySelectorAll(".ha-hot");function close(){buttons.forEach(function(b){b.setAttribute("aria-pressed","false");});}fig.addEventListener("click",function(e){var t=e.target;var b=t&&t.closest?t.closest(".ha-hot"):null;if(!b||!fig.contains(b))return;var open=b.getAttribute("aria-pressed")==="true";close();b.setAttribute("aria-pressed",open?"false":"true");});fig.addEventListener("keydown",function(e){if(e.key!=="Escape")return;close();var a=document.activeElement;if(a&&fig.contains(a)&&a.blur)a.blur();});document.addEventListener("click",function(e){if(!fig.contains(e.target))close();});if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(window.IntersectionObserver){var io=new IntersectionObserver(function(en){for(var i=0;i<en.length;i++){if(en[i].isIntersecting){fig.classList.add("ha-armed");io.disconnect();break;}}},{rootMargin:"0% 0% -15% 0%"});io.observe(fig);}else{fig.classList.add("ha-armed");}});})();`,
+      }}
+    />
+  );
+}
+
+/** Explicitly armed spatial field. Construction and playback both happen
+ * inside the click handler, so there is no possible autoplay path. */
+export function HoloAudioScript() {
+  return (
+    <script
+      id="kf-audio"
+      dangerouslySetInnerHTML={{
+        __html: `(function(){var b=document.querySelector("[data-ha-audio]");if(!b)return;var C=window.AudioContext||window.webkitAudioContext;if(!C){b.disabled=true;b.textContent="FIELD AUDIO · UNAVAILABLE";return;}var ctx=null,nodes=[];try{if(localStorage.getItem("kf-field-audio")==="ready")b.textContent="FIELD AUDIO · READY";}catch(_){ }function stop(){for(var i=0;i<nodes.length;i++){try{nodes[i].stop();}catch(_){ }}nodes=[];if(ctx){ctx.close();ctx=null;}b.setAttribute("aria-pressed","false");b.textContent="FIELD AUDIO · OFF";try{localStorage.setItem("kf-field-audio","off");}catch(_){ }}function start(){ctx=new C();var master=ctx.createGain();master.gain.value=.025;master.connect(ctx.destination);var tones=[[440,0,-1],[293.66,-1,0],[349.23,1,0],[220,0,1],[55,0,0]];for(var i=0;i<tones.length;i++){var o=ctx.createOscillator(),g=ctx.createGain(),p=ctx.createPanner();o.type=i===4?"sine":"triangle";o.frequency.value=tones[i][0];g.gain.value=i===4?.28:.12;p.panningModel="HRTF";p.distanceModel="inverse";p.refDistance=1;p.maxDistance=8;p.positionX.value=tones[i][1];p.positionY.value=0;p.positionZ.value=tones[i][2];o.connect(g).connect(p).connect(master);o.start();nodes.push(o);}ctx.resume();b.setAttribute("aria-pressed","true");b.textContent="FIELD AUDIO · ON";try{localStorage.setItem("kf-field-audio","ready");}catch(_){ }}b.addEventListener("click",function(){if(ctx)stop();else start();});addEventListener("pagehide",function(){if(ctx)stop();});})();`,
       }}
     />
   );
@@ -84,7 +94,7 @@ export function FilterScript() {
     <script
       id="kf-filter"
       dangerouslySetInnerHTML={{
-        __html: `(function(){var chips=document.querySelectorAll(".chip[data-filter]");if(!chips.length)return;var out=document.querySelector("[data-filter-count]");var total=out?+out.dataset.total:0;chips.forEach(function(chip){chip.addEventListener("click",function(){var f=chip.dataset.filter;chips.forEach(function(c){c.classList.toggle("on",c===chip);});var shown=0;document.querySelectorAll(".essay").forEach(function(row){var hit=f==="all"||row.dataset.modeTag===f||row.dataset.grade===f;row.hidden=!hit;if(hit)shown++;});if(out){out.textContent=f==="all"?total+(total===1?" PAPER":" PAPERS"):shown+" OF "+total;}});});})();`,
+        __html: `(function(){var chips=document.querySelectorAll(".chip[data-filter]");if(!chips.length)return;var out=document.querySelector("[data-filter-count]");var total=out?+out.dataset.total:0;chips.forEach(function(chip){chip.addEventListener("click",function(){var f=chip.dataset.filter;chips.forEach(function(c){var on=c===chip;c.classList.toggle("on",on);c.setAttribute("aria-pressed",on?"true":"false");});var shown=0;document.querySelectorAll(".essay").forEach(function(row){var hit=f==="all"||row.dataset.modeTag===f||row.dataset.grade===f;row.hidden=!hit;if(hit)shown++;});if(out){out.textContent=f==="all"?total+(total===1?" PAPER":" PAPERS"):shown+" OF "+total;}});});})();`,
       }}
     />
   );

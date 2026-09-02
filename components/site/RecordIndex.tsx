@@ -9,7 +9,7 @@ export default function RecordIndex({ extents }: { extents: Record<string, strin
   return (
     <section id="index" aria-label="Index of records">
       <div className="wrap">
-        <div className="sec-label">INDEX — RECORDS 02–08</div>
+        <div className="sec-label">INDEX · RECORDS 02–08</div>
         <div className="index-list">
           {RECORDS.slice(1).map((r, i) => (
             <a

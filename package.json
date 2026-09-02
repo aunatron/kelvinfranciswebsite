@@ -2,23 +2,34 @@
   "name": "kelvinfranciswebsite",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "dev": "next dev",
     "validate": "tsx scripts/validate-content.ts",
     "audit:contrast": "node scripts/audit-contrast.mjs",
+    "audit:foundation": "node scripts/audit-foundation.mjs",
+    "audit:machine": "node scripts/audit-machine.mjs",
+    "audit:assets": "node scripts/audit-assets.mjs",
+    "audit:moments": "node scripts/audit-moments.mjs",
+    "audit:holo-delta": "node scripts/audit-holo-delta.mjs",
+    "audit:print": "node scripts/audit-print.mjs",
     "audit:a11y": "node scripts/audit-a11y.mjs",
     "audit:lighthouse": "node scripts/audit-lighthouse.mjs",
-    "audit": "npm run audit:contrast && npm run audit:a11y && npm run audit:lighthouse",
+    "test:content-gate": "node scripts/test-content-gate.mjs",
+    "test:exif": "node scripts/strip-exif.mjs --self-test",
+    "audit": "npm run test:content-gate && npm run test:exif && npm run audit:assets && npm run audit:machine && npm run audit:foundation && npm run audit:moments && npm run audit:holo-delta && npm run audit:print && npm run audit:contrast && npm run audit:a11y && npm run audit:lighthouse",
     "prebuild": "npm run validate && node scripts/copy-fonts.mjs && node scripts/strip-exif.mjs",
     "build": "next build && node scripts/postbuild.mjs",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/spectral": "^5.3.0",
     "gray-matter": "^4.0.3",
-    "next": "^16.2.11",
+    "next": "16.3.4",
     "next-mdx-remote": "^6.0.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -32,10 +43,15 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "lighthouse": "^13.4.1",
-    "postcss": "^8.5.22",
+    "postcss": "8.5.26",
     "puppeteer": "^25.3.0",
+    "sharp": "0.35.4",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.1",
     "typescript": "~5.9.3"
+  },
+  "overrides": {
+    "js-yaml": "3.15.2",
+    "nanoid": "3.3.18"
   }
 }

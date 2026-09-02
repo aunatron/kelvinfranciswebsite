@@ -6,7 +6,7 @@ export default function Nav({ current }: { current?: string }) {
   return (
     <nav className="nav" aria-label="Records">
       <div className="nav-in">
-        <a href="/" aria-label="R-01 — Attestation">
+        <a className="nav-home" href="/" aria-label="R-01 · Attestation">
           <Sigil cut="small" className="nav-sigil" label="KF" />
         </a>
         <div className="nav-links">

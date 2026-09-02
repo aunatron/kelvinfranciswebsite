@@ -16,9 +16,9 @@ export default function Section({ id, num, name, heading, intro, children }: Sec
     <section id={id} aria-labelledby={`h-${id}`}>
       <div className="wrap">
         <div className="sec-label">
-          § {num} / {total} — {name}
+          § {num} / {total} · {name}
         </div>
-        <h2 id={`h-${id}`}>{heading}</h2>
+        <h1 className="section-heading" id={`h-${id}`}>{heading}</h1>
         {intro ? <p className="sec-intro">{intro}</p> : null}
         {children}
       </div>

@@ -6,11 +6,15 @@ import matter from "gray-matter";
 import { z } from "zod";
 import {
   ArchivePlateSchema,
+  AttestationSchema,
+  CredentialSchema,
   EssaySchema,
   NowEntrySchema,
   RecordEntrySchema,
   SystemDocSchema,
   type ArchivePlate,
+  type Attestation,
+  type Credential,
   type Essay,
   type NowEntry,
   type RecordEntry,
@@ -40,15 +44,26 @@ const CONTENT_DIR = "content";
 let cachedCommit: string | undefined;
 export function getCommit(): string {
   if (cachedCommit) return cachedCommit;
-  const fromEnv = process.env.VERCEL_GIT_COMMIT_SHA;
-  if (fromEnv) {
-    cachedCommit = fromEnv;
-    return cachedCommit;
-  }
+
   try {
+    // A local export must never claim reproducibility from HEAD while files
+    // that can change the shipped artifact are dirty or untracked. Generated
+    // output and local project instructions are deliberately outside this
+    // path list, so only artifact-affecting source changes invalidate it.
+    const dirty = execSync(
+      "git status --porcelain=v1 --untracked-files=normal -- app components content lib public/scenes styles scripts package.json package-lock.json next.config.ts tsconfig.json",
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+    ).trim();
+    if (dirty) {
+      cachedCommit = "UNCOMMITTED";
+      return cachedCommit;
+    }
+
     cachedCommit = execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
   } catch {
-    cachedCommit = "UNCOMMITTED";
+    // Vercel's build container may not expose .git. Its system-provided SHA
+    // is safe only as that fallback; no user-configured secret is required.
+    cachedCommit = process.env.VERCEL_GIT_COMMIT_SHA || "UNCOMMITTED";
   }
   return cachedCommit;
 }
@@ -58,7 +73,7 @@ function sha256(bytes: Buffer): string {
 }
 
 function listFiles(dir: string): string[] {
-  const abs = join(process.cwd(), CONTENT_DIR, dir);
+  const abs = join(/* turbopackIgnore: true */ process.cwd(), CONTENT_DIR, dir);
   if (!existsSync(abs)) return [];
   return readdirSync(abs)
     .filter((f) => f.endsWith(".md") || f.endsWith(".mdx"))
@@ -70,7 +85,7 @@ function loadFile<S extends z.ZodTypeAny>(
   path: string,
   schema: S
 ): { data: z.infer<S>; body: string; source: Provenance } {
-  const bytes = readFileSync(join(process.cwd(), path));
+  const bytes = readFileSync(join(/* turbopackIgnore: true */ process.cwd(), path));
   const { data, content } = matter(bytes.toString("utf8"));
   const parsed = schema.safeParse(data);
   if (!parsed.success) {
@@ -105,6 +120,22 @@ export function getServiceEntries(): Sourced<RecordEntry>[] {
     .sort((a, b) => a.year - b.year);
 }
 
+export function getAttestation(): Sourced<Attestation> {
+  const docs = loadDir("attestation", AttestationSchema);
+  if (docs.length !== 1) {
+    throw new Error("CONTENT INVALID — content/attestation must contain exactly one record");
+  }
+  return { ...docs[0].data, source: docs[0].source };
+}
+
+export function getCredential(): Sourced<Credential> {
+  const docs = loadDir("credentials", CredentialSchema);
+  if (docs.length !== 1) {
+    throw new Error("CONTENT INVALID — content/credentials must contain exactly one record");
+  }
+  return { ...docs[0].data, source: docs[0].source };
+}
+
 export type EssayDoc = Sourced<Essay> & { slug: string; body: string };
 export function getEssays(): EssayDoc[] {
   const essays = loadDir("essays", EssaySchema).map(({ data, body, source }) => ({
@@ -113,6 +144,9 @@ export function getEssays(): EssayDoc[] {
     source,
     slug: data.record.toLowerCase(),
   }));
+  for (const essay of essays) {
+    if (!essay.body) throw new Error(`CONTENT INVALID · ${essay.source.path} has no essay body`);
+  }
   const seen = new Set<string>();
   for (const e of essays) {
     if (seen.has(e.slug)) throw new Error(`CONTENT INVALID — duplicate record id ${e.record}`);
@@ -123,9 +157,14 @@ export function getEssays(): EssayDoc[] {
 
 export type NowDoc = Sourced<NowEntry> & { body: string };
 export function getNowEntries(): NowDoc[] {
-  return loadDir("now", NowEntrySchema)
+  const entries = loadDir("now", NowEntrySchema)
     .map(({ data, body, source }) => ({ ...data, body, source }))
     .sort((a, b) => (a.date < b.date ? 1 : -1));
+  if (entries.length === 0) throw new Error("CONTENT INVALID · content/now is empty");
+  for (const entry of entries) {
+    if (!entry.body) throw new Error(`CONTENT INVALID · ${entry.source.path} has no body`);
+  }
+  return entries;
 }
 
 export type SystemDocFull = Sourced<SystemDoc> & { body: string };
@@ -133,6 +172,7 @@ export function getSystemDoc(): SystemDocFull {
   const docs = loadDir("system", SystemDocSchema);
   if (docs.length === 0) throw new Error("CONTENT INVALID — content/system is empty");
   const latest = docs[docs.length - 1];
+  if (!latest.body) throw new Error(`CONTENT INVALID · ${latest.source.path} has no body`);
   return { ...latest.data, body: latest.body, source: latest.source };
 }
 
@@ -149,6 +189,8 @@ export function getArchivePlates(): Sourced<ArchivePlate>[] {
  */
 export function getDossierAttestation() {
   const all = [
+    getAttestation(),
+    getCredential(),
     ...getRecordEntries(),
     ...getServiceEntries(),
     ...getEssays(),
@@ -167,6 +209,8 @@ export function getDossierAttestation() {
 export function getAllContent() {
   return {
     commit: getCommit(),
+    attestation: getAttestation(),
+    credential: getCredential(),
     record: getRecordEntries(),
     service: getServiceEntries(),
     essays: getEssays(),

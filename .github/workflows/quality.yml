@@ -13,16 +13,49 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install
         run: npm ci
 
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
+      - name: Typecheck
+        run: npm run lint
+
       # Builds the artifact the audits run against. The build itself already
       # enforces the 30KB per-page JS budget and strips EXIF.
       - name: Build
         run: npm run build
+
+      - name: Content rejection proof
+        run: npm run test:content-gate
+
+      - name: Location metadata rejection proof
+        run: npm run test:exif
+
+      - name: Media asset contract
+        run: npm run audit:assets
+
+      - name: Machine-readable contract
+        run: npm run audit:machine
+
+      # Foundation laws are executable: allowed breakpoints, token-only
+      # components, three reference widths, mode state, touch targets,
+      # no-JS readability, and reduced-motion parity.
+      - name: Foundation contract
+        run: npm run audit:foundation
+
+      - name: Signature moments contract
+        run: npm run audit:moments
+
+      - name: HoloArt Lighthouse delta
+        run: npm run audit:holo-delta
+
+      - name: Print contract
+        run: npm run audit:print
 
       # Any text colour under 4.5:1 on the ground it renders on = rejected.
       # Also fails if --gold-rule is ever used for text.
@@ -33,6 +66,6 @@ jobs:
       - name: Accessibility audit (axe)
         run: npm run audit:a11y
 
-      # Performance >= 95, accessibility/best-practices/SEO 100, CLS 0.
+      # 100 in all four categories, observed LCP under 1s, CLS 0.
       - name: Lighthouse
         run: npm run audit:lighthouse

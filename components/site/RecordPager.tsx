@@ -9,14 +9,14 @@ export default function RecordPager({ current }: { current: RecordRoute["href"] 
       <div className="pager">
         {prev ? (
           <a className="mono-link" href={prev.href} rel="prev">
-            ← § {prev.num} — {prev.name}
+            ← § {prev.num} · {prev.name}
           </a>
         ) : (
           <span />
         )}
         {next ? (
           <a className="mono-link" href={next.href} rel="next">
-            § {next.num} — {next.name} →
+            § {next.num} · {next.name} →
           </a>
         ) : (
           <span />

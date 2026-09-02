@@ -1,21 +1,37 @@
 ---
 record: DOCTRINE-001
 title: "Proof is the product."
-date: "2026-07-24"
+date: "2026-09-02"
 mode: francis
 grade: high-conviction
 horizon: near
-status: draft
+status: published
 tags: [proof, verification, the-future]
-summary: "As generation gets cheap, verification becomes the scarce good. The argument for building on the side that proves what's real."
+summary: "As generation gets cheap, verification becomes the scarce good. The case for building systems that can show their work."
 resolution: open
+sources:
+  - label: "Public source repository"
+    url: "https://github.com/aunatron/kelvinfranciswebsite"
 ---
 
-> DRAFT — replace before launch.
+The cost of producing a convincing claim keeps falling. Text can be generated in seconds. Images can be manufactured without a camera. Interfaces can present confidence whether the system behind them deserves it or not.
 
-[NEEDS INPUT: essay body. Placeholder paragraph one — the argument that as
-generation becomes cheap, verification becomes the scarce good, to be written
-in Kelvin's voice.]
+That changes what people should value. The scarce thing is no longer the polished statement. It is the evidence that lets another person check where the statement came from, when it changed, and what boundary it does not cross.
 
-[NEEDS INPUT: essay body. Placeholder paragraph two — what this means for how
-the next decade of security work is graded, to be written in Kelvin's voice.]
+## Put the receipt beside the claim
+
+Proof works best when it is part of the object being judged. A security report should identify its scope and evidence. A public record should carry a date and source. Software that claims integrity should expose enough of its build history for someone else to reproduce the check.
+
+This dossier uses a modest version of that rule. Its source records are hashed during the build. The public page carries those hashes and the exact Git commit. A reader can ask the browser to fetch the same source and compare the bytes.
+
+The mechanism proves one narrow thing: the displayed record matches its public source at that commit. It does not prove that every sentence is true. That requires receipts, careful grades, and a willingness to correct the record. Stating that limit is part of the proof.
+
+## Design for correction
+
+A trustworthy record needs a visible history. Silent edits protect appearance. Dated corrections protect the reader.
+
+That is why predictions here carry conviction grades and resolutions. It is also why empty sections stay empty. A blank service ledger is more credible than invented impact. A dormant collaboration block is stronger than a borrowed logo.
+
+My conviction is that this becomes a product requirement across security and intelligent systems. As generated output becomes abundant, systems that can show provenance, scope, authorization, and change history will carry more weight than systems that simply sound certain.
+
+The proof is not decoration around the product. Increasingly, it is the product.

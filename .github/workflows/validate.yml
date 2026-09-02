@@ -13,7 +13,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install
@@ -23,6 +23,9 @@ jobs:
       # not a convention.
       - name: Validate content (zod)
         run: npm run validate
+
+      - name: Typecheck
+        run: npm run lint
 
       - name: Build (includes EXIF strip, runtime strip, 30KB JS budget)
         run: npm run build

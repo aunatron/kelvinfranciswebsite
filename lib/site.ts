@@ -4,7 +4,7 @@
  */
 export const site = {
   name: "Kelvin-Francis Peprah",
-  title: "Kelvin-Francis Peprah — The Human Attestation",
+  title: "Kelvin-Francis Peprah · The Human Attestation",
   description:
     "A verified, dated, graded record. Cybersecurity and intelligent systems.",
   url: "https://kelvinfranciswebsite.vercel.app",

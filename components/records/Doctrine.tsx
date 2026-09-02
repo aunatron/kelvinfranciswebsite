@@ -26,11 +26,17 @@ export default function Doctrine({ essays }: { essays: EssayDoc[] }) {
             type="button"
             className={`chip${value === "all" ? " on" : ""}`}
             data-filter={value}
+            aria-pressed={value === "all"}
           >
             {label}
           </button>
         ))}
-        <span className="filter-count" data-filter-count data-total={essays.length}>
+        <span
+          className="filter-count"
+          data-filter-count
+          data-total={essays.length}
+          aria-live="polite"
+        >
           {essays.length} {essays.length === 1 ? "PAPER" : "PAPERS"}
         </span>
       </div>

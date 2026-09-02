@@ -18,7 +18,6 @@ export default function Now({ entries }: { entries: NowDoc[] }) {
   return (
     <Section id="r04" num="04" name="Now" heading={<>This season.</>}>
       <div className="now">
-        <span className="draft-tag">Draft — Kelvin rewrites before launch</span>
         <div className="now-date">{formatDate(current.date)}</div>
         <MDXRemote source={current.body} />
       </div>

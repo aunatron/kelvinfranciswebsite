@@ -11,13 +11,12 @@ export default function TheSystem({ doc }: { doc: SystemDocFull }) {
       name="The System"
       heading={
         <>
-          How I work. <span className="sys-v">The System — v{doc.version}</span>
+          How I work. <span className="sys-v">The System · v{doc.version}</span>
         </>
       }
     >
       <div className="sys-grid">
         <div className="sys-body">
-          <span className="draft-tag">Draft — Kelvin rewrites before launch</span>
           <MDXRemote source={doc.body} />
           <Verify sources={[doc.source]} />
         </div>

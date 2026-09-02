@@ -7,6 +7,8 @@ import { getAllContent } from "../lib/content";
 try {
   const all = getAllContent();
   const counts = [
+    `attestation 1`,
+    `credential 1`,
     `record ${all.record.length}`,
     `service ${all.service.length}`,
     `essays ${all.essays.length}`,

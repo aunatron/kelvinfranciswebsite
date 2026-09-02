@@ -6,10 +6,10 @@
 export default function ModeToggle() {
   return (
     <div className="mode-toggle" role="group" aria-label="Mode">
-      <button type="button" className="on" data-mode="francis">
+      <button type="button" className="on" data-mode="francis" aria-pressed="true">
         Francis
       </button>
-      <button type="button" data-mode="hunter">
+      <button type="button" data-mode="hunter" aria-pressed="false">
         Hunter
       </button>
     </div>

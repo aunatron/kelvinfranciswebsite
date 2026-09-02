@@ -1,6 +1,7 @@
 import Sigil from "@/components/ui/Sigil";
 import { site, repoUrl } from "@/lib/site";
-import type { Provenance } from "@/lib/content";
+import type { Provenance, Sourced } from "@/lib/content";
+import type { Attestation as AttestationRecord } from "@/lib/validate";
 
 type AttestData = {
   digest: string;
@@ -15,7 +16,13 @@ type AttestData = {
  * re-fetches the sources pinned to the commit, re-hashes them, recomputes
  * the digest, and only then stamps VERIFIED. Never a false green.
  */
-export default function Attestation({ attest }: { attest: AttestData }) {
+export default function Attestation({
+  attest,
+  record,
+}: {
+  attest: AttestData;
+  record: Sourced<AttestationRecord>;
+}) {
   const short = attest.commit.slice(0, 7);
   const payload = JSON.stringify(attest.files.map((f) => ({ h: f.hash, p: f.path })));
 
@@ -47,35 +54,35 @@ export default function Attestation({ attest }: { attest: AttestData }) {
           <span className="tk-b" aria-hidden="true" />
           <div className="attest-head">
             <span>ATTESTATION</span>
-            <span>KF·2026·001</span>
+            <span>{record.id}</span>
           </div>
           <div className="a-row">
             <span className="a-key">NAME</span>
-            <span className="a-val">KELVIN-FRANCIS PEPRAH</span>
+            <span className="a-val">{record.name}</span>
           </div>
           <div className="a-row">
             <span className="a-key">FIELD</span>
-            <span className="a-val">CYBERSECURITY · INTELLIGENT SYSTEMS</span>
+            <span className="a-val">{record.field}</span>
           </div>
           <div className="a-row">
-            <span className="a-key">LICENSE</span>
+            <span className="a-key">CREDENTIAL</span>
             <span className="a-val">
-              GHANA CSA — CYBERSECURITY PROFESSIONAL · INDIVIDUAL
-              <span className="dot" aria-hidden="true" />
-              ACTIVE
+              {record.credential}
+              <span className="dot subject" aria-hidden="true" />
+              {record.credential_status.replace("-", " ").toUpperCase()}
             </span>
           </div>
           <div className="a-row">
             <span className="a-key">COMPANY</span>
-            <span className="a-val">FOUNDER &amp; CEO, AUNATRON SYSTEMS — IN DEVELOPMENT</span>
+            <span className="a-val">{record.company}</span>
           </div>
           <div className="a-row">
             <span className="a-key">ORIGIN</span>
-            <span className="a-val">BUILT IN AFRICA</span>
+            <span className="a-val">{record.origin}</span>
           </div>
           <div className="a-row">
             <span className="a-key">STANCE</span>
-            <span className="a-val">DEFENSIVE · LAWFUL · ON THE RECORD</span>
+            <span className="a-val">{record.stance}</span>
           </div>
           <div className="a-row a-digest-row">
             <span className="a-key">DIGEST</span>
@@ -92,7 +99,9 @@ export default function Attestation({ attest }: { attest: AttestData }) {
           </div>
           <div className="attest-foot">
             <a className="attest-seal" data-attest-seal href={`${repoUrl}/tree/${attest.commit}`}>
-              <span data-seal-state>VERIFIED ✓ {short} — AT BUILD</span>
+              <span data-seal-state aria-live="polite">
+                VERIFY SOURCE RECORDS · {short}
+              </span>
             </a>
           </div>
         </div>
@@ -100,7 +109,7 @@ export default function Attestation({ attest }: { attest: AttestData }) {
 
       {/* Where the file starts. A filing instruction, not an invitation. */}
       <a className="begin" href="/record/">
-        BEGIN <span aria-hidden="true">→</span> § 02 — THE RECORD
+        BEGIN <span aria-hidden="true">→</span> § 02 · THE RECORD
       </a>
     </header>
   );

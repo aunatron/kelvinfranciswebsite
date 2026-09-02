@@ -1,5 +1,6 @@
 import Section from "@/components/site/Section";
 import Verify, { VerifyBoundary } from "@/components/ui/Verify";
+import ProofConstellation from "@/components/holo/ProofConstellation";
 import type { Sourced } from "@/lib/content";
 import type { RecordEntry } from "@/lib/validate";
 
@@ -8,7 +9,11 @@ function LedgerRow({ entry, i }: { entry: Sourced<RecordEntry>; i: number }) {
     <div className="led-row" data-reveal style={{ "--rv-i": i } as React.CSSProperties}>
       <span className="led-year">{entry.year}</span>
       <span>
-        <span className="led-name">{entry.name}</span>
+        {entry.url ? (
+          <a className="led-name led-link" href={entry.url}>{entry.name} ↗</a>
+        ) : (
+          <span className="led-name">{entry.name}</span>
+        )}
         <span className="led-line">{entry.line}</span>
       </span>
       <span className={`tag${entry.status === "active" ? " active" : ""}`}>
@@ -46,6 +51,7 @@ export default function TheRecord({
   return (
     <Section id="r02" num="02" name="The Record" heading={<>What I&rsquo;ve built.</>}>
       <Ledger entries={builds} />
+      <ProofConstellation entries={builds} />
       <div className="fine">
         Parked is not failed. Every line above is a capability
         <br />
@@ -55,11 +61,11 @@ export default function TheRecord({
       <div className="sub-label">SERVICE</div>
       <Ledger
         entries={service}
-        emptyLine="Service work, recorded the same way as everything else — dated, plain, no adjectives. Entries appear as they're completed."
+        emptyLine="Service work, recorded the same way as everything else: dated, plain, no adjectives. Entries appear as they are completed."
       />
 
       <div className="dormant">
-        <div className="dormant-h">Collaborations — dormant</div>
+        <div className="dormant-h">Collaborations · dormant</div>
         <p>
           Named only with written permission. No unearned logos, no borrowed
           credibility. This block activates when a collaboration clears that

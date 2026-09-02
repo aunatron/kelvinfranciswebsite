@@ -38,6 +38,24 @@ const QUALITY = 60;
 const FLOOR = 4; // black-matte cutoff: at or below this, fully transparent
 const RAMP = 5; // steepness above the cutoff
 
+/**
+ * Regions cut to full transparency after keying, in SOURCE pixels
+ * [left, top, width, height].
+ *
+ * operators-desk: the image model drew its own interpretation of the KF
+ * sigil as the console emblem, and the sigil is locked canon — that version
+ * runs its connectors straight through the node rings (breaking the grammar
+ * law), drops the south node and all four wings, and ends in a hollow
+ * chevron instead of the solid stiletto. We cut it out and the real Sigil
+ * component is overlaid in its place: canon geometry, crisp at any zoom,
+ * and it recolours with the mode engine because it draws in currentColor.
+ * Verified by measurement that this rect contains the emblem and nothing
+ * else — the console's top edge sits below it.
+ */
+const MASKS = {
+  "e2-1-r01-operators-desk": [[788, 38, 250, 387]],
+};
+
 if (!SRC || !existsSync(SRC)) {
   console.error("usage: node scripts/holoart-encode.mjs <src-dir> [out-dir]");
   process.exit(1);
@@ -81,6 +99,18 @@ for (const file of sources) {
   const { data, info } = await img.raw().toBuffer({ resolveWithObject: true });
 
   const keyed = keyMatte(data, info);
+
+  let cut = 0;
+  for (const [mx, my, mw, mh] of MASKS[slug] ?? []) {
+    for (let y = my; y < my + mh && y < info.height; y++) {
+      for (let x = mx; x < mx + mw && x < info.width; x++) {
+        const o = (y * info.width + x) * 4 + 3;
+        if (keyed[o] > 0) cut++;
+        keyed[o] = 0;
+      }
+    }
+  }
+
   const before = statSync(src).size;
 
   await sharp(keyed, { raw: { width: info.width, height: info.height, channels: 4 } })
@@ -103,6 +133,7 @@ for (const file of sources) {
     `     ${meta.width}x${meta.height} native | ${(before / 1024).toFixed(0)} KB PNG -> ${(after / 1024).toFixed(0)} KB AVIF`
   );
   console.log(`     keyed to transparent: ${inkPct}% of the frame`);
+  if (cut) console.log(`     masked out: ${cut} lit px removed by ${MASKS[slug].length} region(s)`);
   console.log(`     stays pixel-exact up to ${ceiling2x}px CSS width on a 2x display`);
   if (meta.width < 2000) {
     console.log(

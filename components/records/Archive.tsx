@@ -15,7 +15,7 @@ export default function Archive({ plates }: { plates: Sourced<ArchivePlate>[] })
     <Section id="r08" num="08" name="The Archive" heading={<>The visual record.</>}>
       {plates.length === 0 ? (
         <div className="dormant">
-          <div className="dormant-h">Plates — none yet</div>
+          <div className="dormant-h">Plates · none yet</div>
           <p>Plates are added as work is documented. Nothing staged, nothing stock.</p>
         </div>
       ) : (
@@ -23,11 +23,11 @@ export default function Archive({ plates }: { plates: Sourced<ArchivePlate>[] })
           {plates.map((p) => (
             <figure key={p.plate} className="plate">
               {p.media === "image" ? (
-                <img src={p.src} alt={p.caption} loading="lazy" decoding="async" />
+                <img src={p.src} alt={p.alt} width={p.width} height={p.height} loading="lazy" decoding="async" />
               ) : (
                 <a className="plate-clip" href={p.src}>
                   {p.poster ? (
-                    <img src={p.poster} alt={p.caption} loading="lazy" decoding="async" />
+                    <img src={p.poster} alt={p.alt} width={p.width} height={p.height} loading="lazy" decoding="async" />
                   ) : null}
                   <span className="mono">▶ LOAD CLIP</span>
                 </a>

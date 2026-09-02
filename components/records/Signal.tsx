@@ -17,10 +17,10 @@ export default function Signal() {
       </p>
 
       <div className="dormant">
-        <div className="dormant-h">Press — dormant</div>
+        <div className="dormant-h">Press · dormant</div>
         <p>
           Activates on the first real mention. Until then this block stays
-          empty rather than padded — same rule as everything else here.
+          empty rather than padded. The same rule applies to everything else here.
         </p>
       </div>
     </Section>

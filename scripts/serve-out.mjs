@@ -17,9 +17,10 @@ const TYPES = {
   ".woff2": "font/woff2",
   ".png": "image/png",
   ".jpg": "image/jpeg",
+  ".avif": "image/avif",
 };
 
-export function serveOut(root = "out", port = 4178) {
+export function serveOut(root = "out", port = 0) {
   const server = createServer((req, res) => {
     const url = decodeURIComponent((req.url ?? "/").split("?")[0]);
     let file = join(root, url);
@@ -35,7 +36,11 @@ export function serveOut(root = "out", port = 4178) {
     res.end(readFileSync(file));
   });
   return new Promise((resolve) => {
-    server.listen(port, () => resolve({ server, origin: `http://localhost:${port}` }));
+    server.listen(port, "127.0.0.1", () => {
+      const address = server.address();
+      const actualPort = typeof address === "object" && address ? address.port : port;
+      resolve({ server, origin: `http://127.0.0.1:${actualPort}` });
+    });
   });
 }
 
@@ -44,7 +49,9 @@ export const ROUTES = [
   "/",
   "/record/",
   "/doctrine/",
+  "/doctrine/doctrine-001/",
   "/doctrine/hunt-001/",
+  "/doctrine/teach-001/",
   "/now/",
   "/credentials/",
   "/signal/",
