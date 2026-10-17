@@ -50,17 +50,45 @@ export const SystemDocSchema = z.object({
   changelog: z.array(z.string()),
 });
 
+/**
+ * A plate is an exhibit: numbered, dated, captioned, tied to a record.
+ * `src` is the universally decodable file (JPEG); the optional AVIF pair
+ * is offered first through <picture> and never required. All derived files
+ * are written by scripts/add-image.mjs, which also strips every metadata
+ * container before anything reaches public/.
+ */
 export const ArchivePlateSchema = z.object({
   plate: z.number().int().positive(),
   date: z.string().regex(ISO_DATE),
-  caption: z.string(),
+  caption: z.string().min(1),
   media: z.enum(["image", "clip"]),
-  src: z.string(),
+  src: z.string().min(1),
+  avif: z.string().optional(),
+  avif_small: z.string().optional(),
+  full: z.string().optional(),
   poster: z.string().optional(),
+  /** Record id this plate documents: R-02, DOCTRINE-001, NOW-2026-09-02 … */
   record: z.string().optional(),
   alt: z.string().min(1),
   width: z.number().int().positive(),
   height: z.number().int().positive(),
+});
+
+/**
+ * The portrait on the cover sheet. Optional: when content/portrait/ is
+ * empty the attestation card renders without a photograph rather than with
+ * a placeholder. When present it is hashed into the dossier digest like
+ * every other record.
+ */
+export const PortraitSchema = z.object({
+  date: z.string().regex(ISO_DATE),
+  src: z.string().min(1),
+  avif: z.string().optional(),
+  avif_small: z.string().optional(),
+  alt: z.string().min(1),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+  caption: z.string().optional(),
 });
 
 export const AttestationSchema = z.object({
@@ -87,6 +115,7 @@ export const CredentialSchema = z.object({
 });
 
 export type ArchivePlate = z.infer<typeof ArchivePlateSchema>;
+export type Portrait = z.infer<typeof PortraitSchema>;
 export type Essay = z.infer<typeof EssaySchema>;
 export type RecordEntry = z.infer<typeof RecordEntrySchema>;
 export type NowEntry = z.infer<typeof NowEntrySchema>;

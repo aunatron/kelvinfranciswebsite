@@ -10,6 +10,7 @@ import {
   CredentialSchema,
   EssaySchema,
   NowEntrySchema,
+  PortraitSchema,
   RecordEntrySchema,
   SystemDocSchema,
   type ArchivePlate,
@@ -17,9 +18,11 @@ import {
   type Credential,
   type Essay,
   type NowEntry,
+  type Portrait,
   type RecordEntry,
   type SystemDoc,
 } from "./validate";
+import { recordExtents } from "./records";
 
 /**
  * Content pipeline: read content/** → gray-matter → zod → THROW on any
@@ -177,9 +180,56 @@ export function getSystemDoc(): SystemDocFull {
 }
 
 export function getArchivePlates(): Sourced<ArchivePlate>[] {
-  return loadDir("archive", ArchivePlateSchema)
+  const plates = loadDir("archive", ArchivePlateSchema)
     .map(({ data, source }) => ({ ...data, source }))
     .sort((a, b) => a.plate - b.plate);
+  const seen = new Set<number>();
+  for (const p of plates) {
+    if (seen.has(p.plate)) throw new Error(`CONTENT INVALID · duplicate plate number ${p.plate}`);
+    seen.add(p.plate);
+  }
+  return plates;
+}
+
+/**
+ * Plates tied to a record. A plate names what it documents (`record:`), and
+ * the page for that record shows it automatically: add one plate, it files
+ * itself in the Archive and beside the work it belongs to.
+ *   R-02          · every plate whose record is R-02 or starts with "R-02 "
+ *   DOCTRINE-001  · exact essay id
+ */
+export function getPlatesFor(recordId: string): Sourced<ArchivePlate>[] {
+  const id = recordId.toUpperCase();
+  return getArchivePlates().filter((p) => {
+    if (!p.record) return false;
+    const r = p.record.toUpperCase();
+    return r === id || r.startsWith(`${id} `) || r.startsWith(`${id}·`);
+  });
+}
+
+/** The cover-sheet portrait, or null when none is filed. Never a placeholder. */
+export function getPortrait(): Sourced<Portrait> | null {
+  const docs = loadDir("portrait", PortraitSchema);
+  if (docs.length > 1) {
+    throw new Error("CONTENT INVALID · content/portrait must contain at most one record");
+  }
+  if (docs.length === 0) return null;
+  return { ...docs[0].data, source: docs[0].source };
+}
+
+let cachedExtents: Record<string, string> | undefined;
+/** What each record holds, counted from content. Shared by nav, rail, menu and index. */
+export function getRecordExtents(): Record<string, string> {
+  if (cachedExtents) return cachedExtents;
+  cachedExtents = recordExtents({
+    builds: getRecordEntries().length,
+    service: getServiceEntries().length,
+    essays: getEssays().length,
+    now: getNowEntries().length,
+    plates: getArchivePlates().length,
+    systemVersion: getSystemDoc().version,
+  });
+  return cachedExtents;
 }
 
 /**
@@ -197,6 +247,7 @@ export function getDossierAttestation() {
     ...getNowEntries(),
     getSystemDoc(),
     ...getArchivePlates(),
+    ...(getPortrait() ? [getPortrait()!] : []),
   ].map((x) => x.source);
   const sorted = [...all].sort((a, b) => (a.path < b.path ? -1 : 1));
   const digest = sha256(
@@ -217,5 +268,6 @@ export function getAllContent() {
     now: getNowEntries(),
     system: getSystemDoc(),
     archive: getArchivePlates(),
+    portrait: getPortrait(),
   };
 }

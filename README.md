@@ -58,6 +58,26 @@ absolute:
 
 If either is in doubt, the plate does not ship.
 
+## Adding photographs
+
+One command per photo. It re-encodes the pixels (which drops all EXIF, GPS,
+XMP and IPTC), proves no metadata survived, never upscales, writes a JPEG
+plus two AVIF sizes to `public/media/`, and files the validated content
+record.
+
+```
+npm run add-image -- photo.jpg --portrait --alt "What the photo shows"
+npm run add-image -- photo.jpg --plate 1 --record R-02 --caption "What it documents" --alt "What the photo shows"
+```
+
+- **Portrait** (`content/portrait/portrait.md`): cropped 4:5 and shown on
+  the cover sheet beside the attestation panel. With no portrait filed, the
+  cover sheet shows no photograph rather than a stand-in.
+- **Plates** (`content/archive/plate-NNN.md`): appear in R-08 The Archive.
+  A plate with `record: R-02`, `R-04` or an essay id such as `DOCTRINE-001`
+  also appears on that record's own page.
+- Both are hashed into the dossier digest like every other record.
+
 ## Publishing
 
 1. Edit or add content under `content/**` (zod-validated on build).

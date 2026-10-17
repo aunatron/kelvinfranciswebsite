@@ -1,23 +1,23 @@
 import Shell from "@/components/site/Shell";
 import Attestation from "@/components/records/Attestation";
 import RecordIndex from "@/components/site/RecordIndex";
+import HomeOverview from "@/components/site/HomeOverview";
 import HoloArt from "@/components/holo/HoloArt";
 import { AttestScript, HoloArtScript, HoloAudioScript } from "@/components/site/scripts";
-import { getAllContent, getAttestation, getDossierAttestation } from "@/lib/content";
-import { recordExtents } from "@/lib/records";
+import {
+  getAttestation,
+  getDossierAttestation,
+  getEssays,
+  getNowEntries,
+  getPortrait,
+  getRecordEntries,
+  getRecordExtents,
+} from "@/lib/content";
 import { site, repoUrl } from "@/lib/site";
 
 export default function Home() {
   const attest = getDossierAttestation();
-  const all = getAllContent();
-  const extents = recordExtents({
-    builds: all.record.length,
-    service: all.service.length,
-    essays: all.essays.length,
-    now: all.now.length,
-    plates: all.archive.length,
-    systemVersion: all.system.version,
-  });
+  const portrait = getPortrait();
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -28,6 +28,7 @@ export default function Home() {
         email: `mailto:${site.email}`,
         sameAs: [site.linkedin, repoUrl],
         jobTitle: "Cybersecurity and intelligent-systems founder",
+        ...(portrait ? { image: `${site.url}${portrait.src}` } : {}),
       },
       {
         "@type": "WebSite",
@@ -41,11 +42,14 @@ export default function Home() {
   return (
     <>
       <Shell current="/">
-        <Attestation attest={attest} record={getAttestation()} />
-        {/* Below the attestation on purpose: a scene must never be the LCP
-            element, which is what lets it load lazily and honestly. */}
-        <HoloArt commit={attest.commit} sources={attest.files.length} />
-        <RecordIndex extents={extents} />
+        <Attestation attest={attest} record={getAttestation()} portrait={portrait} />
+        <HomeOverview builds={getRecordEntries()} essays={getEssays()} now={getNowEntries()[0]} />
+        <RecordIndex extents={getRecordExtents()} />
+        {/* Last on purpose: a scene must never be the LCP element, which is
+            what lets it load lazily and honestly. */}
+        <section className="home-sec home-scene" aria-label="The operator's desk">
+          <HoloArt commit={attest.commit} sources={attest.files.length} />
+        </section>
       </Shell>
       <AttestScript />
       <HoloArtScript />

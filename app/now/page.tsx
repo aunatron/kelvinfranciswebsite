@@ -1,7 +1,7 @@
 import Shell from "@/components/site/Shell";
 import Now from "@/components/records/Now";
 import { VerifyScript } from "@/components/site/scripts";
-import { getNowEntries } from "@/lib/content";
+import { getNowEntries, getPlatesFor } from "@/lib/content";
 import { site } from "@/lib/site";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -15,7 +15,7 @@ export default function NowPage() {
   return (
     <>
       <Shell current="/now/">
-        <Now entries={getNowEntries()} />
+        <Now entries={getNowEntries()} plates={getPlatesFor("R-04")} />
       </Shell>
       <VerifyScript />
     </>
