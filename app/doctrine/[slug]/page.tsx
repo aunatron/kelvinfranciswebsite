@@ -1,10 +1,12 @@
+import "@/styles/records.css";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Shell from "@/components/site/Shell";
 import Verify from "@/components/ui/Verify";
 import { VerifyScript } from "@/components/site/scripts";
-import { getEssays } from "@/lib/content";
+import { RelatedPlates } from "@/components/records/Plates";
+import { getEssays, getPlatesFor } from "@/lib/content";
 import { site } from "@/lib/site";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -57,11 +59,17 @@ export default async function EssayPage({
     <>
       <Shell pageMode={essay.mode}>
         <article className="wrap essay-page page">
-          <div className="sec-label">
-            {essay.record} · {essay.date}
-          </div>
+          <nav className="crumbs" aria-label="Breadcrumb">
+            <a href="/">Dossier</a>
+            <span aria-hidden="true">/</span>
+            <a href="/doctrine/">§ 03 · Doctrine</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{essay.record}</span>
+          </nav>
           <h1 className="page-h">{essay.title}</h1>
+          <p className="essay-lede">{essay.summary}</p>
           <div className="essay-meta mono">
+            <span>{essay.date}</span>
             <span>GRADE {GRADE_LABEL[essay.grade]}</span>
             <span>MODE {essay.mode.toUpperCase()}</span>
             <span>HORIZON {essay.horizon.toUpperCase()}</span>
@@ -83,6 +91,7 @@ export default async function EssayPage({
               </ul>
             </div>
           ) : null}
+          <RelatedPlates plates={getPlatesFor(essay.record)} />
           <Verify sources={[essay.source]} />
           <p className="split page-back">
             <a className="mono-link" href="/doctrine/">

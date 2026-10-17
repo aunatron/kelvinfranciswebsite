@@ -1,3 +1,4 @@
+import "@/styles/records.css";
 import Shell from "@/components/site/Shell";
 import { getReckoning } from "@/lib/reckoning";
 import { site } from "@/lib/site";
@@ -22,7 +23,13 @@ export default function TrackRecordPage() {
   return (
     <Shell>
       <div className="wrap page">
-        <div className="sec-label">§ 03 · TRACK RECORD · THE RECKONING</div>
+        <nav className="crumbs" aria-label="Breadcrumb">
+          <a href="/">Dossier</a>
+          <span aria-hidden="true">/</span>
+          <a href="/doctrine/">§ 03 · Doctrine</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">Track record</span>
+        </nav>
         <h1 className="page-h">Misses first.</h1>
 
         <div className="score">

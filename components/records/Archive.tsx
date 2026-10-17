@@ -1,13 +1,10 @@
 import Section from "@/components/site/Section";
+import Plates from "@/components/records/Plates";
 import type { Sourced } from "@/lib/content";
 import type { ArchivePlate } from "@/lib/validate";
 
-function pad(n: number) {
-  return String(n).padStart(3, "0");
-}
-
 /**
- * R-08 — media as exhibits, not a gallery. Numbered plates, mono metadata,
+ * R-08: media as exhibits, not a gallery. Numbered plates, mono metadata,
  * factual captions. Clips are poster + click-to-load only; never autoplay.
  */
 export default function Archive({ plates }: { plates: Sourced<ArchivePlate>[] }) {
@@ -19,26 +16,7 @@ export default function Archive({ plates }: { plates: Sourced<ArchivePlate>[] })
           <p>Plates are added as work is documented. Nothing staged, nothing stock.</p>
         </div>
       ) : (
-        <div className="plates">
-          {plates.map((p) => (
-            <figure key={p.plate} className="plate">
-              {p.media === "image" ? (
-                <img src={p.src} alt={p.alt} width={p.width} height={p.height} loading="lazy" decoding="async" />
-              ) : (
-                <a className="plate-clip" href={p.src}>
-                  {p.poster ? (
-                    <img src={p.poster} alt={p.alt} width={p.width} height={p.height} loading="lazy" decoding="async" />
-                  ) : null}
-                  <span className="mono">▶ LOAD CLIP</span>
-                </a>
-              )}
-              <figcaption className="plate-meta">
-                PLATE {pad(p.plate)} · {p.date} · {p.caption}
-                {p.record ? <> · → {p.record}</> : null}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        <Plates plates={plates} />
       )}
     </Section>
   );

@@ -23,7 +23,8 @@
     "prebuild": "npm run validate && node scripts/copy-fonts.mjs && node scripts/strip-exif.mjs",
     "build": "next build && node scripts/postbuild.mjs",
     "start": "next start",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "add-image": "node scripts/add-image.mjs"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",

@@ -1,6 +1,9 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Section from "@/components/site/Section";
 import Verify from "@/components/ui/Verify";
+import { RelatedPlates } from "@/components/records/Plates";
+import type { Sourced } from "@/lib/content";
+import type { ArchivePlate } from "@/lib/validate";
 import type { NowDoc } from "@/lib/content";
 
 function formatDate(iso: string) {
@@ -13,7 +16,7 @@ function formatDate(iso: string) {
 }
 
 /** R-04 — the current season, followed by every season before it. */
-export default function Now({ entries }: { entries: NowDoc[] }) {
+export default function Now({ entries, plates = [] }: { entries: NowDoc[]; plates?: Sourced<ArchivePlate>[] }) {
   const [current, ...past] = entries;
   return (
     <Section id="r04" num="04" name="Now" heading={<>This season.</>}>
@@ -22,6 +25,7 @@ export default function Now({ entries }: { entries: NowDoc[] }) {
         <MDXRemote source={current.body} />
       </div>
       <Verify sources={[current.source]} />
+      <RelatedPlates plates={plates} />
 
       {past.length > 0 ? (
         <>

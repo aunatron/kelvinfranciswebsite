@@ -87,6 +87,19 @@ try {
 
     if (!response || response.status() !== 200) fail(`${width}px: homepage did not return 200`);
 
+    // The scene sits below the fold and loads lazily (it must never be the
+    // LCP element). Bring it into view so its pixels exist to be measured,
+    // then return to the top so the hero checks see the first viewport.
+    await page.evaluate(async () => {
+      document.documentElement.style.scrollBehavior = "auto";
+      const img = document.querySelector(".ha-raster img");
+      if (!img) return;
+      img.scrollIntoView({ block: "center" });
+      if (!img.complete) await new Promise((done) => img.addEventListener("load", done, { once: true }));
+      await img.decode().catch(() => {});
+      window.scrollTo(0, 0);
+    });
+
     const state = await page.evaluate(() => {
       const box = (selector) => {
         const element = document.querySelector(selector);

@@ -1,6 +1,8 @@
 import Section from "@/components/site/Section";
 import Verify, { VerifyBoundary } from "@/components/ui/Verify";
 import ProofConstellation from "@/components/holo/ProofConstellation";
+import { RelatedPlates } from "@/components/records/Plates";
+import type { ArchivePlate } from "@/lib/validate";
 import type { Sourced } from "@/lib/content";
 import type { RecordEntry } from "@/lib/validate";
 
@@ -44,13 +46,17 @@ function Ledger({ entries, emptyLine }: { entries: Sourced<RecordEntry>[]; empty
 export default function TheRecord({
   builds,
   service,
+  plates = [],
 }: {
   builds: Sourced<RecordEntry>[];
   service: Sourced<RecordEntry>[];
+  plates?: Sourced<ArchivePlate>[];
 }) {
   return (
     <Section id="r02" num="02" name="The Record" heading={<>What I&rsquo;ve built.</>}>
+      <div className="sub-label sub-label-first">BUILDS</div>
       <Ledger entries={builds} />
+      <RelatedPlates plates={plates} />
       <ProofConstellation entries={builds} />
       <div className="fine">
         Parked is not failed. Every line above is a capability

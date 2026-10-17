@@ -9,11 +9,8 @@ export default function TheSystem({ doc }: { doc: SystemDocFull }) {
       id="r07"
       num="07"
       name="The System"
-      heading={
-        <>
-          How I work. <span className="sys-v">The System · v{doc.version}</span>
-        </>
-      }
+      heading={<>How I work.</>}
+      aside={<span className="sys-v">The System · v{doc.version}</span>}
     >
       <div className="sys-grid">
         <div className="sys-body">

@@ -1,3 +1,5 @@
+import "@/styles/records.css";
+import PageHead from "@/components/site/PageHead";
 import { RECORDS } from "@/lib/records";
 
 type SectionProps = {
@@ -5,21 +7,17 @@ type SectionProps = {
   num: string;
   name: string;
   heading: React.ReactNode;
-  intro?: React.ReactNode;
+  aside?: React.ReactNode;
   children: React.ReactNode;
 };
 
-/** The record pattern: mono label `§ 0N / 08 — NAME` with hairline rule → serif heading → content. */
-export default function Section({ id, num, name, heading, intro, children }: SectionProps) {
-  const total = String(RECORDS.length).padStart(2, "0");
+/** A record page: breadcrumb header, then content. */
+export default function Section({ id, num, heading, aside, children }: SectionProps) {
+  const r = RECORDS.find((x) => x.num === num);
   return (
-    <section id={id} aria-labelledby={`h-${id}`}>
+    <section id={id} className="record-page" aria-labelledby={`h-r${num}`}>
       <div className="wrap">
-        <div className="sec-label">
-          § {num} / {total} · {name}
-        </div>
-        <h1 className="section-heading" id={`h-${id}`}>{heading}</h1>
-        {intro ? <p className="sec-intro">{intro}</p> : null}
+        <PageHead href={r?.href ?? "/"} heading={heading} aside={aside} />
         {children}
       </div>
     </section>
